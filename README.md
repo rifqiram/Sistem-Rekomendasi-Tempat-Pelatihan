@@ -24,7 +24,7 @@ Aplikasi ini telah menyediakan RESTful API. Kamu bisa melihat atau mengunduh dok
 
 * 📄 [Lihat Dokumentasi API (PDF)](./public/docs/api-documentation.pdf) 
 * 📥 [Download API Specification (PDF)](http://127.0.0.1:8000/docs/api-documentation.pdf)
-* 🚀 [Download Postman Collection (JSON)](./public/docs/collection.json)
+* 🚀 [Download Postman Collection (JSON)](./public/docs/My%20Collection.postman_collection.json)
 
 ---
 

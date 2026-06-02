@@ -1,74 +1,217 @@
+````md
 <p align="center">
   <a href="https://laravel.com" target="_blank">
     <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
   </a>
 </p>
 
-# 🚀 Uts-RekomendasiPelatihan
+<h1 align="center">🚀 UTS - Rekomendasi Pelatihan</h1>
 
-Sistem manajemen pelatihan berbasis Laravel yang mengelola data mentor, kelas, dan proses pendaftaran peserta secara terstruktur.
+<p align="center">
+Sistem manajemen pelatihan berbasis Laravel untuk mengelola data mentor, kelas pelatihan, dan proses pendaftaran peserta secara terstruktur.
+</p>
 
 ---
 
-## 📌 Karakteristik Sistem
+## 📌 Tentang Project
 
-* **⚙️ Arsitektur:** Menggunakan MVC & Eloquent ORM dengan relasi tabel pivot antara Peserta dan Pelatihan.
-* **🔒 Keamanan:** Proteksi hak akses Admin/User via *middleware* otorisasi dan validasi input yang ketat.
-* **🧩 Fleksibilitas:** Menyediakan API Controller & Resource untuk kemudahan integrasi dengan platform lain.
+**UTS - Rekomendasi Pelatihan** merupakan aplikasi berbasis **Laravel** yang dirancang untuk membantu proses pengelolaan pelatihan secara lebih efektif dan terorganisir. Sistem ini menyediakan fitur pengelolaan mentor, data peserta, kelas pelatihan, hingga proses registrasi peserta menggunakan pendekatan arsitektur MVC dan Eloquent ORM.
+
+---
+
+## ✨ Fitur Utama
+
+- 👨‍🏫 Manajemen Data Mentor  
+- 🎓 Manajemen Pelatihan & Kelas  
+- 👥 Manajemen Data Peserta  
+- 📝 Registrasi / Pendaftaran Peserta  
+- 🔐 Otorisasi Hak Akses menggunakan Middleware  
+- 🧩 RESTful API menggunakan Resource Controller  
+- 🗄️ Relasi Database menggunakan Eloquent ORM  
+
+---
+
+## ⚙️ Karakteristik Sistem
+
+### 🏗️ Arsitektur
+Menggunakan pola **MVC (Model-View-Controller)** dengan implementasi **Eloquent ORM** serta relasi tabel pivot untuk menghubungkan data peserta dan pelatihan.
+
+### 🔒 Keamanan
+Menerapkan validasi input dan proteksi hak akses menggunakan **middleware authorization** untuk membedakan akses Admin dan User.
+
+### 🔌 Integrasi API
+Menyediakan **RESTful API** menggunakan API Controller dan Resource agar sistem mudah diintegrasikan dengan platform lain.
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+- **Laravel**
+- **PHP**
+- **MySQL**
+- **Bootstrap / Tailwind CSS** *(sesuaikan dengan project Anda)*
+- **Eloquent ORM**
+- **REST API**
 
 ---
 
 ## 🌐 Dokumentasi API
 
-Aplikasi ini telah menyediakan RESTful API. Kamu bisa melihat atau mengunduh dokumentasi lengkapnya melalui tautan di bawah ini:
+Dokumentasi API tersedia pada file berikut:
 
-* 📄 [Lihat Dokumentasi API (PDF)](./public/docs/api-documentation.pdf) *(Tautan lokal repositori)*
-* 📥 [Download API Specification (PDF)](http://127.0.0.1:8000/docs/api-documentation.pdf) *(Akses saat server lokal berjalan)*
+```txt
+/public/docs/api-documentation.pdf
+````
+
+Atau dapat diakses melalui browser saat server Laravel berjalan:
+
+```txt
+http://127.0.0.1:8000/docs/api-documentation.pdf
+```
 
 ---
 
-## 🛠️ Langkah Instalasi Lokal
+## 📂 Struktur Sistem
 
-Ikuti langkah-langkah berikut untuk menjalankan proyek ini di komputer lokal Anda:
+Beberapa struktur utama pada project:
 
-### 1. Clone Repositori
+```txt
+app/            -> Logic aplikasi (Controller, Model, Middleware)
+config/         -> Konfigurasi aplikasi
+database/       -> Migration, Seeder, Factory
+public/         -> Asset publik dan dokumentasi API
+resources/      -> View, CSS, JS
+routes/         -> Routing web dan API
+storage/        -> Penyimpanan file sistem
+tests/          -> Pengujian aplikasi
+```
+
+---
+
+## 🚀 Instalasi Project
+
+Ikuti langkah berikut untuk menjalankan project di komputer lokal.
+
+### 1. Clone Repository
+
 ```bash
-git clone [https://github.com/rifqiram/Uts-RekomendasiPelatihan.git](https://github.com/rifqiram/Uts-RekomendasiPelatihan.git)
+git clone https://github.com/rifqiram/Uts-RekomendasiPelatihan.git
 cd Uts-RekomendasiPelatihan
+```
 
-2. Install Dependensi PHP
-Sebelum menjalankan aplikasi, Anda perlu mengunduh semua library dan package pendukung framework Laravel yang tercantum di file composer.json.
+---
 
-*Pastikan komputer Anda sudah terinstal Composer.
-*Jalankan perintah instalasi agar folder vendor/ otomatis terbuat.
+### 2. Install Dependency
 
+Pastikan **Composer** telah terinstal, lalu jalankan:
+
+```bash
 composer install
+```
 
-3. Setup Environment (Konfigurasi Lingkungan)
-Langkah ini diperlukan untuk membuat file konfigurasi utama aplikasi dan menghubungkannya ke database lokal Anda.
+Jika project menggunakan frontend asset (Vite/NPM):
 
-*Duplikat atau salin file .env.example yang ada di folder utama proyek, lalu ubah namanya menjadi .env.
-*Buka file .env tersebut menggunakan text editor (seperti VS Code).
-*Cari bagian konfigurasi database dan sesuaikan dengan nama database di MySQL Anda (misalnya DB_DATABASE=uts_rekomendasi_pelatihan).
-*Jalankan perintah berikut untuk meng-generate kunci keamanan aplikasi yang baru.
+```bash
+npm install
+```
 
+---
+
+### 3. Setup Environment
+
+Salin file environment:
+
+```bash
 cp .env.example .env
+```
+
+Generate application key:
+
+```bash
 php artisan key:generate
+```
 
-4. Migrasi Database & Seeder
-Proses ini akan otomatis membuat struktur tabel database yang dibutuhkan oleh sistem tanpa perlu membuatnya manual satu per satu di phpMyAdmin.
+Kemudian buka file `.env` dan sesuaikan konfigurasi database:
 
-*Pastikan aplikasi database seperti XAMPP (MySQL) sudah dalam posisi Start / aktif.
-*Jalankan perintah migrasi berikut untuk menyuntikkan skema tabel beserta data awal bawaan (seed).
+```env
+DB_DATABASE=uts_rekomendasi_pelatihan
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
+---
+
+### 4. Migrasi Database dan Seeder
+
+Pastikan MySQL aktif, kemudian jalankan:
+
+```bash
 php artisan migrate --seed
+```
 
-5. Jalankan Server Lokal
-Langkah terakhir untuk menguji dan melihat hasil aplikasi di browser Anda.
+Perintah ini akan:
 
-*Jalankan perintah berikut untuk menyalakan server bawaan Laravel.
+* Membuat seluruh tabel database
+* Menjalankan relasi antar tabel
+* Mengisi data awal (seed)
 
+---
+
+### 5. Jalankan Server Laravel
+
+```bash
 php artisan serve
+```
 
-📝 Lisensi
-Proyek ini bersifat open-source di bawah lisensi MIT.
+Aplikasi dapat diakses pada:
+
+```txt
+http://127.0.0.1:8000
+```
+
+---
+
+## 🔍 API Endpoint
+
+Contoh endpoint API:
+
+```txt
+GET    /api/pelatihan
+POST   /api/pelatihan
+GET    /api/peserta
+POST   /api/pendaftaran
+```
+
+*(Sesuaikan dengan endpoint project Anda)*
+
+---
+
+## 🧪 Testing
+
+Menjalankan pengujian Laravel:
+
+```bash
+php artisan test
+```
+
+atau
+
+```bash
+php artisan test --filter NamaTest
+```
+
+---
+
+## 👨‍💻 Developer
+
+**Rifqi Ramadhan**
+Project UTS Pemrograman Web Laravel
+
+---
+
+## 📝 License
+
+Project ini bersifat **open-source** dan menggunakan lisensi **MIT License**.
+
+```
+```

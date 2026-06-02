@@ -62,7 +62,6 @@ Ikuti langkah berikut untuk menjalankan project di komputer lokal.
 
 ```bash
 git clone https://github.com/rifqiram/Uts-RekomendasiPelatihan.git
-cd Uts-RekomendasiPelatihan
 ```
 
 ---

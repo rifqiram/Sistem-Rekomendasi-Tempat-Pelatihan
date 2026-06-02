@@ -1,41 +1,74 @@
+````md
 <p align="center">
   <a href="https://laravel.com" target="_blank">
     <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
   </a>
 </p>
 
-# 🚀 Uts-RekomendasiPelatihan
+<h1 align="center">🚀 UTS - Rekomendasi Pelatihan</h1>
 
-Sistem manajemen pelatihan berbasis Laravel yang mengelola data mentor, kelas, dan proses pendaftaran peserta secara terstruktur.
+<p align="center">
+Sistem manajemen pelatihan berbasis Laravel untuk mengelola data mentor, kelas pelatihan, dan proses pendaftaran peserta secara terstruktur.
+</p>
 
 ---
 
-## 📌 Karakteristik Sistem
+## 📌 Tentang Project
 
-* **⚙️ Arsitektur:** Menggunakan MVC & Eloquent ORM dengan relasi tabel pivot antara Peserta dan Pelatihan.
-* **🔒 Keamanan:** Proteksi hak akses Admin/User via *middleware* otorisasi dan validasi input yang ketat.
-* **🧩 Fleksibilitas:** Menyediakan API Controller & Resource untuk kemudahan integrasi dengan platform lain.
+**UTS - Rekomendasi Pelatihan** merupakan aplikasi berbasis **Laravel** yang dirancang untuk membantu proses pengelolaan pelatihan secara lebih efektif dan terorganisir. Sistem ini menyediakan fitur pengelolaan mentor, data peserta, kelas pelatihan, hingga proses registrasi peserta menggunakan pendekatan arsitektur MVC dan Eloquent ORM.
+
+---
+
+## ✨ Fitur Utama
+
+- 👨‍🏫 Manajemen Data Mentor  
+- 🎓 Manajemen Pelatihan & Kelas  
+- 👥 Manajemen Data Peserta  
+- 📝 Registrasi / Pendaftaran Peserta  
+- 🔐 Otorisasi Hak Akses menggunakan Middleware  
+- 🧩 RESTful API menggunakan Resource Controller  
+- 🗄️ Relasi Database menggunakan Eloquent ORM  
+
+---
+
+## ⚙️ Karakteristik Sistem
+
+### 🏗️ Arsitektur
+Menggunakan pola **MVC (Model-View-Controller)** dengan implementasi **Eloquent ORM** serta relasi tabel pivot untuk menghubungkan data peserta dan pelatihan.
+
+### 🔒 Keamanan
+Menerapkan validasi input dan proteksi hak akses menggunakan **middleware authorization** untuk membedakan akses Admin dan User.
+
+### 🔌 Integrasi API
+Menyediakan **RESTful API** menggunakan API Controller dan Resource agar sistem mudah diintegrasikan dengan platform lain.
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+- **Laravel**
+- **PHP**
+- **MySQL**
+- **Bootstrap / Tailwind CSS** *(sesuaikan dengan project Anda)*
+- **Eloquent ORM**
+- **REST API**
 
 ---
 
 ## 🌐 Dokumentasi API
 
-Aplikasi ini telah menyediakan RESTful API. Kamu bisa melihat atau mengunduh dokumentasi lengkapnya melalui tautan di bawah ini:
+Dokumentasi API tersedia pada file berikut:
 
-* 📄 [Lihat Dokumentasi API (PDF)](./public/docs/api-documentation.pdf) *(Tautan lokal repositori)*
-* 📥 [Download API Specification (PDF)](http://127.0.0.1:8000/docs/api-documentation.pdf) *(Akses saat server lokal berjalan)*
+```txt
+/public/docs/api-documentation.pdf
+````
 
----
+Atau dapat diakses melalui browser saat server Laravel berjalan:
 
-## 🛠️ Langkah Instalasi Lokal
+```txt
+http://127.0.0.1:8000/docs/api-documentation.pdf
+```
 
-Ikuti langkah-langkah berikut untuk menjalankan proyek ini di komputer lokal Anda:
-
-### 1. Clone Repositori
-Salin proyek ini dari GitHub ke komputer lokal Anda menggunakan Git Bash atau terminal.
-```bash
-git clone [https://github.com/rifqiram/Uts-RekomendasiPelatihan.git](https://github.com/rifqiram/Uts-RekomendasiPelatihan.git)
-cd Uts-RekomendasiPelatihan
 ---
 
 ## 📂 Struktur Sistem

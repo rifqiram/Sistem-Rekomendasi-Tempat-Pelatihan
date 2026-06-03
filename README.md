@@ -22,7 +22,8 @@ Sistem manajemen pelatihan berbasis Laravel yang mengelola data mentor, kelas, d
 
 Aplikasi ini telah menyediakan RESTful API. Kamu bisa melihat atau mengunduh dokumentasi lengkapnya melalui tautan di bawah ini:
 
-* 📄 [Lihat Dokumentasi API (PDF)](./public/docs/api-documentation.pdf) 
+* 📄 [Lihat Dokumentasi API (PDF)](./public/docs/api-documentation.pdf)
+* 📄 [Dokumentasi Sistem](public/docs/dokumentasi-sistem-pelatihanIT.pdf)
 * 📥 [Download API Specification (PDF)](http://127.0.0.1:8000/docs/api-documentation.pdf)
 * 🚀 [Download Postman Collection (JSON)](./public/docs/My%20Collection.postman_collection.json)
 

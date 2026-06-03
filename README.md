@@ -169,9 +169,9 @@ php artisan test --filter NamaTest
 
 ## 👨‍💻 Developer
 
-**Rifqi Ramadhan**
-**6B**
-**2305101030**
+**Rifqi Ramadhan** |
+**6B** |
+**2305101030** |
 Project UTS Pemrograman Web Laravel
 
 ---

@@ -11,31 +11,31 @@
     <nav class="sidebar-nav">
         <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:2px;">
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#dashboard" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-th-large"></i></span>
                     <p>Dashboard</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#pelatihan" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
                     <p>Pelatihan</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                <a href="{{ route('admin.dashboard') }}#mentor" class="nav-link active">
                     <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
                     <p>Mentor</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#peserta" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-users"></i></span>
                     <p>Peserta</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#pendaftaran" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-file-signature"></i></span>
                     <p>Pendaftaran</p>
                 </a>
@@ -53,6 +53,9 @@
 
 <div class="admin-main">
     <header class="admin-topbar">
+        <button id="hamburgerBtn" class="hamburger-btn">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="topbar-search">
             <span class="search-icon"><i class="fas fa-search"></i></span>
             <input type="text" placeholder="Cari sesuatu...">

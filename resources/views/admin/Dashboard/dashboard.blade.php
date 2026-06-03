@@ -57,6 +57,9 @@
 <div class="admin-main">
     {{-- Topbar --}}
     <header class="admin-topbar">
+        <button id="hamburgerBtn" class="hamburger-btn">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="topbar-search">
             <span class="search-icon"><i class="fas fa-search"></i></span>
             <input type="text" placeholder="Cari sesuatu...">
@@ -230,7 +233,8 @@
                                 <th>Nama</th>
                                 <th>Email</th>
                                 <th>Telepon</th>
-                                <th>Instansi</th>
+                                <th>Keahlian</th>
+
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -308,6 +312,7 @@
     };
 
     function showTab(tab) {
+        if (!sections.includes(tab)) tab = 'dashboard';
         sections.forEach(name => {
             document.getElementById('tab-' + name).classList.toggle('d-none', name !== tab);
         });
@@ -315,7 +320,16 @@
             link.classList.toggle('active', link.dataset.target === tab);
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        history.replaceState(null, null, '#' + tab);
     }
+    
+    window.addEventListener('hashchange', function() {
+        const hash = window.location.hash.substring(1);
+        if (sections.includes(hash)) {
+            showTab(hash);
+        }
+    });
+
     document.querySelectorAll('.nav-link[data-target]').forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
@@ -385,7 +399,7 @@
                     <td>${mentor.keahlian ? `<span class="badge badge-info">${mentor.keahlian}</span>` : '<span style="color:var(--color-text-muted);">-</span>'}</td>
                     <td>
                         <button class="btn btn-sm btn-warning" onclick="editMentor(${mentor.id})"><i class="fas fa-pencil-alt"></i> Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteMentor(${mentor.id})"><i class="fas fa-trash"></i> Hapus</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-action="delete" data-type="mentor" data-id="${mentor.id}"><i class="fas fa-trash"></i> Hapus</button>
                     </td>
                 </tr>
             `);
@@ -415,7 +429,7 @@
                     <td>${statusBadge(item.status)}</td>
                     <td>
                         <button class="btn btn-sm btn-warning" onclick="editPelatihan(${item.id})"><i class="fas fa-pencil-alt"></i> Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deletePelatihan(${item.id})"><i class="fas fa-trash"></i> Hapus</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-action="delete" data-type="pelatihan" data-id="${item.id}"><i class="fas fa-trash"></i> Hapus</button>
                     </td>
                 </tr>
             `);
@@ -439,10 +453,11 @@
                     <td><span class="font-semibold">${item.nama}</span></td>
                     <td style="color:var(--color-text-secondary);">${item.email}</td>
                     <td>${item.telepon || '<span style="color:var(--color-text-muted);">-</span>'}</td>
-                    <td>${item.instansi || '<span style="color:var(--color-text-muted);">-</span>'}</td>
+                    <td>${item.keahlian || '<span style="color:var(--color-text-muted);">-</span>'}</td>
+
                     <td>
                         <button class="btn btn-sm btn-warning" onclick="editPeserta(${item.id})"><i class="fas fa-pencil-alt"></i> Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deletePeserta(${item.id})"><i class="fas fa-trash"></i> Hapus</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-action="delete" data-type="peserta" data-id="${item.id}"><i class="fas fa-trash"></i> Hapus</button>
                         <button class="btn btn-sm btn-info" onclick="loadHistory(${item.id})"><i class="fas fa-history"></i> Riwayat</button>
                     </td>
                 </tr>
@@ -469,7 +484,7 @@
                     <td style="color:var(--color-text-secondary);">${item.tanggal_daftar || '-'}</td>
                     <td>${statusBadge(item.status)}</td>
                     <td>
-                        <button class="btn btn-sm btn-danger" onclick="deletePendaftaran(${item.id})"><i class="fas fa-trash"></i> Hapus</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-action="delete" data-type="pendaftaran" data-id="${item.id}"><i class="fas fa-trash"></i> Hapus</button>
                     </td>
                 </tr>
             `);
@@ -484,29 +499,38 @@
     async function deleteMentor(id) {
         const ok = await showConfirmModal(
             'Hapus Mentor',
-            'Apakah Anda yakin ingin menghapus data mentor ini? Tindakan ini tidak dapat dibatalkan.'
+            'Apakah Anda yakin ingin menghapus data mentor ini? Jika mentor masih memiliki kelas, penghapusan tidak akan dilanjutkan.'
         );
         if (!ok) return;
         try {
             const res = await authFetch(window.apiBase + '/mentor/' + id, { method: 'DELETE' });
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                return showErrorModal('Gagal Menghapus Mentor', err.message || 'Terjadi kesalahan.');
+                return showErrorModal('Gagal Menghapus Mentor', getDeleteErrorMessage(err.message, err.message || 'Terjadi kesalahan.'));
             }
             await refreshAll();
         } catch (e) { showErrorModal('Gagal Menghapus Mentor', e.message); }
     }
+
+    function getDeleteErrorMessage(message, defaultMessage) {
+        const mapping = {
+            'Masih Ada Peserta!': 'Tidak dapat menghapus karena masih ada data pendaftaran atau peserta terkait. Hapus data terkait terlebih dahulu.',
+            'Masih Ada Kelas!': 'Tidak dapat menghapus karena masih ada pelatihan terkait. Hapus pelatihan terkait terlebih dahulu.',
+        };
+        return mapping[message] || defaultMessage;
+    }
+
     async function deletePelatihan(id) {
         const ok = await showConfirmModal(
             'Hapus Pelatihan',
-            'Apakah Anda yakin ingin menghapus data pelatihan ini?'
+            'Apakah Anda yakin ingin menghapus data pelatihan ini? Jika pelatihan masih memiliki peserta terdaftar, penghapusan tidak akan dilanjutkan.'
         );
         if (!ok) return;
         try {
             const res = await authFetch(window.apiBase + '/pelatihan/' + id, { method: 'DELETE' });
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                return showErrorModal('Gagal Menghapus Pelatihan', err.message || 'Terjadi kesalahan.');
+                return showErrorModal('Gagal Menghapus Pelatihan', getDeleteErrorMessage(err.message, err.message || 'Terjadi kesalahan.'));
             }
             await refreshAll();
         } catch (e) { showErrorModal('Gagal Menghapus Pelatihan', e.message); }
@@ -514,14 +538,14 @@
     async function deletePeserta(id) {
         const ok = await showConfirmModal(
             'Hapus Peserta',
-            'Apakah Anda yakin ingin menghapus data peserta ini?'
+            'Apakah Anda yakin ingin menghapus data peserta ini? Jika peserta masih memiliki pendaftaran, penghapusan tidak akan dilanjutkan.'
         );
         if (!ok) return;
         try {
             const res = await authFetch(window.apiBase + '/peserta/' + id, { method: 'DELETE' });
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                return showErrorModal('Gagal Menghapus Peserta', err.message || 'Terjadi kesalahan.');
+                return showErrorModal('Gagal Menghapus Peserta', getDeleteErrorMessage(err.message, err.message || 'Terjadi kesalahan.'));
             }
             await refreshAll();
         } catch (e) { showErrorModal('Gagal Menghapus Peserta', e.message); }
@@ -536,10 +560,35 @@
             const res = await authFetch(window.apiBase + '/pendaftaran/' + id, { method: 'DELETE' });
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                return showErrorModal('Gagal Menghapus Pendaftaran', err.message || 'Terjadi kesalahan.');
+                return showErrorModal('Gagal Menghapus Pendaftaran', getDeleteErrorMessage(err.message, err.message || 'Terjadi kesalahan.'));
             }
             await refreshAll();
         } catch (e) { showErrorModal('Gagal Menghapus Pendaftaran', e.message); }
+    }
+
+    function handleDeleteButtonClick(event) {
+        const button = event.target.closest('button[data-action="delete"]');
+        if (!button) return;
+        const type = button.dataset.type;
+        const id = button.dataset.id;
+        if (!type || !id) return;
+
+        switch (type) {
+            case 'mentor':
+                deleteMentor(id);
+                break;
+            case 'pelatihan':
+                deletePelatihan(id);
+                break;
+            case 'peserta':
+                deletePeserta(id);
+                break;
+            case 'pendaftaran':
+                deletePendaftaran(id);
+                break;
+            default:
+                console.warn('Unknown delete type:', type);
+        }
     }
 
     async function editMentor(id) {
@@ -581,7 +630,8 @@
             window.location.href = '/admin/login';
             return;
         }
-        showTab('pelatihan');
+        const hash = window.location.hash.substring(1);
+        showTab(sections.includes(hash) ? hash : 'dashboard');
         await refreshAll();
 
         const pesertaForm = document.getElementById('pesertaForm');
@@ -594,7 +644,8 @@
                         nama: document.getElementById('pesertaNama').value,
                         email: document.getElementById('pesertaEmail').value,
                         telepon: document.getElementById('pesertaTelepon').value,
-                        instansi: document.getElementById('pesertaInstansi').value,
+                        keahlian: document.getElementById('pesertaKeahlian').value,
+
                     }),
                 });
                 e.target.reset(); await refreshAll();
@@ -629,6 +680,13 @@
                 window.location.href = '/admin/login';
             });
         }
+
+        ['mentorTable', 'pelatihanTable', 'pesertaTable', 'pendaftaranTable'].forEach(tableId => {
+            const table = document.getElementById(tableId);
+            if (table) {
+                table.addEventListener('click', handleDeleteButtonClick);
+            }
+        });
     });
 </script>
 @endpush

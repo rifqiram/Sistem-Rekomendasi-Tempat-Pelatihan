@@ -13,7 +13,8 @@ class PesertaResource extends JsonResource
             'nama' => $this->nama,
             'email' => $this->email,
             'telepon' => $this->telepon,
-            'instansi' => $this->instansi,
+            'keahlian' => $this->keahlian,
+
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];

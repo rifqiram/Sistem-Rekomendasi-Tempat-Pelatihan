@@ -12,7 +12,7 @@ class Peserta extends Model
         'nama',
         'email',
         'telepon',
-        'instansi',
+        'keahlian',
     ];
 
     public function pendaftarans()

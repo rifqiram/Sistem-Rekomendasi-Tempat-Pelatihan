@@ -31,8 +31,9 @@ class PesertaController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:tabel_peserta,email',
             'telepon' => 'nullable|string|max:50',
-            'instansi' => 'nullable|string|max:255',
+            'keahlian' => 'nullable|string|max:255',
         ]);
+
 
         $peserta = Peserta::create($data);
 
@@ -50,8 +51,9 @@ class PesertaController extends Controller
             'nama' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|unique:tabel_peserta,email,' . $peserta->id,
             'telepon' => 'nullable|string|max:50',
-            'instansi' => 'nullable|string|max:255',
+            'keahlian' => 'nullable|string|max:255',
         ]);
+
 
         $peserta->update($data);
 

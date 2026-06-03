@@ -44,6 +44,17 @@
         body { background: var(--color-bg); min-height: 100vh; }
 
         /* ============================
+           SIDEBAR OVERLAY (Mobile)
+        ============================ */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+            z-index: 199; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+
+        /* ============================
            LAYOUT
         ============================ */
         .admin-wrapper { display: flex; min-height: 100vh; }
@@ -63,6 +74,7 @@
             flex-direction: column;
             overflow-y: auto;
             overflow-x: hidden;
+            transition: transform 0.3s ease;
         }
 
         /* Logo / Brand */
@@ -145,6 +157,13 @@
             gap: 16px;
             position: sticky; top: 0; z-index: 100;
         }
+        .hamburger-btn {
+            display: none; align-items: center; justify-content: center;
+            width: 34px; height: 34px; border: none; background: transparent;
+            color: var(--color-text); font-size: 18px; cursor: pointer;
+            border-radius: var(--radius-sm); transition: background 0.15s;
+        }
+        .hamburger-btn:hover { background: var(--color-bg); }
         .topbar-search {
             flex: 1; max-width: 360px;
             position: relative;
@@ -541,6 +560,7 @@
             .admin-main { margin-left: 0; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .col-md-4, .col-md-6, .col-lg-3 { width: 100%; }
+            .hamburger-btn { display: flex !important; }
         }
         @media (max-width: 500px) {
             .stats-grid { grid-template-columns: 1fr; }
@@ -548,6 +568,7 @@
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="admin-wrapper">
         @yield('content')
     </div>
@@ -631,8 +652,10 @@
                 document.getElementById('confirmOverlay').classList.add('active');
 
                 document.getElementById('confirmOkBtn').onclick = function () {
-                    closeConfirmModal();
-                    resolve(true);
+                    var res = window._confirmResolve;
+                    window._confirmResolve = null;
+                    document.getElementById('confirmOverlay').classList.remove('active');
+                    if (res) res(true);
                 };
             });
         };
@@ -657,6 +680,32 @@
             if (errorOverlay) {
                 errorOverlay.addEventListener('click', function (e) {
                     if (e.target === errorOverlay) closeErrorModal();
+                });
+            }
+
+            // Sidebar Toggle Logic
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sidebar = document.getElementById('adminSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (hamburgerBtn && sidebar && sidebarOverlay) {
+                hamburgerBtn.addEventListener('click', function () {
+                    sidebar.classList.toggle('open');
+                    sidebarOverlay.classList.toggle('show');
+                });
+                sidebarOverlay.addEventListener('click', function () {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('show');
+                });
+                
+                // Close sidebar on link click (mobile)
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth <= 768) {
+                            sidebar.classList.remove('open');
+                            sidebarOverlay.classList.remove('show');
+                        }
+                    });
                 });
             }
         });

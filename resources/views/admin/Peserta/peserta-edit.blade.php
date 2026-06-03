@@ -11,31 +11,31 @@
     <nav class="sidebar-nav">
         <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:2px;">
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#dashboard" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-th-large"></i></span>
                     <p>Dashboard</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#pelatihan" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></span>
                     <p>Pelatihan</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#mentor" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-user-tie"></i></span>
                     <p>Mentor</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                <a href="{{ route('admin.dashboard') }}#peserta" class="nav-link active">
                     <span class="nav-icon"><i class="fas fa-users"></i></span>
                     <p>Peserta</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}#pendaftaran" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-file-signature"></i></span>
                     <p>Pendaftaran</p>
                 </a>
@@ -53,6 +53,9 @@
 
 <div class="admin-main">
     <header class="admin-topbar">
+        <button id="hamburgerBtn" class="hamburger-btn">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="topbar-search">
             <span class="search-icon"><i class="fas fa-search"></i></span>
             <input type="text" placeholder="Cari sesuatu...">
@@ -111,8 +114,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Instansi</label>
-                                <input type="text" id="pesertaInstansi" class="form-control" placeholder="Nama perusahaan / instansi">
+                                <label>Keahlian</label>
+                                <input type="text" id="pesertaKeahlian" class="form-control" placeholder="Keahlian yang dimiliki">
                             </div>
                         </div>
                     </div>
@@ -169,7 +172,7 @@
             document.getElementById('pesertaNama').value = peserta.nama || '';
             document.getElementById('pesertaEmail').value = peserta.email || '';
             document.getElementById('pesertaTelepon').value = peserta.telepon || '';
-            document.getElementById('pesertaInstansi').value = peserta.instansi || '';
+            document.getElementById('pesertaKeahlian').value = peserta.keahlian || '';
 
             const user = getApiUser();
             const email = user?.email || 'Administrator';
@@ -191,7 +194,8 @@
             nama: document.getElementById('pesertaNama').value,
             email: document.getElementById('pesertaEmail').value,
             telepon: document.getElementById('pesertaTelepon').value,
-            instansi: document.getElementById('pesertaInstansi').value,
+            keahlian: document.getElementById('pesertaKeahlian').value,
+
         };
 
         console.log('Sending data:', data);

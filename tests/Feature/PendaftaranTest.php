@@ -48,7 +48,7 @@ class PendaftaranTest extends TestCase
             'nama' => 'Peserta Satu',
             'email' => 'peserta@example.com',
             'telepon' => '08123456791',
-            'instansi' => 'PT Contoh',
+            'keahlian' => 'PT Contoh',
         ]);
 
         $response = $this->withHeaders($this->authHeaders($user->api_token))

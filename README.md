@@ -4,6 +4,8 @@
   </a>
 </p>
 
+ini loh ya
+
 # 🚀 Uts-RekomendasiPelatihan
 
 Sistem manajemen pelatihan berbasis Laravel yang mengelola data mentor, kelas, dan proses pendaftaran peserta secara terstruktur.

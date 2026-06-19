@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_url}}/api/peserta"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "nama": "Peserta Satu",
+      "email": "peserta@example.com",
+      "telepon": "08123456789",
+      "keahlian": "PHP"
+    }
+order: 1000

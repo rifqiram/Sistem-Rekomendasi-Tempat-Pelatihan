@@ -8,24 +8,21 @@ use Illuminate\Http\Request;
 
 class MentorController extends Controller
 {
-    public function __construct()
+    public function index(Request $request)
     {
-        $this->middleware(function ($request, $next) {
-            if ($response = $this->authorizeAdmin($request)) {
-                return $response;
-            }
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
 
-            return $next($request);
-        });
-    }
-
-    public function index()
-    {
-        return MentorResource::collection(Mentor::all());
+        return $this->successResponse(MentorResource::collection(Mentor::all()), 'Data mentor berhasil diambil');
     }
 
     public function store(Request $request)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:tabel_mentor,email',
@@ -35,16 +32,24 @@ class MentorController extends Controller
 
         $mentor = Mentor::create($data);
 
-        return new MentorResource($mentor);
+        return $this->successResponse(new MentorResource($mentor), 'Mentor berhasil dibuat', 201);
     }
 
-    public function show(Mentor $mentor)
+    public function show(Request $request, Mentor $mentor)
     {
-        return new MentorResource($mentor);
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
+        return $this->successResponse(new MentorResource($mentor), 'Detail mentor berhasil diambil');
     }
 
     public function update(Request $request, Mentor $mentor)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         $data = $request->validate([
             'nama' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|unique:tabel_mentor,email,' . $mentor->id,
@@ -54,17 +59,21 @@ class MentorController extends Controller
 
         $mentor->update($data);
 
-        return new MentorResource($mentor);
+        return $this->successResponse(new MentorResource($mentor), 'Mentor berhasil diperbarui');
     }
 
-    public function destroy(Mentor $mentor)
+    public function destroy(Request $request, Mentor $mentor)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         if ($mentor->pelatihans()->exists()) {
-            return response()->json(['message' => 'Masih Ada Kelas!'], 400);
+            return $this->errorResponse('Masih ada kelas untuk mentor ini', 400);
         }
 
         $mentor->delete();
 
-        return response()->noContent();
+        return $this->successResponse(null, 'Mentor berhasil dihapus');
     }
 }

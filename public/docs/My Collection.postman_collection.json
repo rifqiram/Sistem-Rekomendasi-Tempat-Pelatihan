@@ -1,212 +1,73 @@
 {
   "info": {
-    "_postman_id": "17d4aad3-0c17-4692-97d7-b09a24b0d6fc",
-    "name": "My Collection",
-    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "55399545",
-    "_collection_link": "https://go.postman.co/collection/55399545-17d4aad3-0c17-4692-97d7-b09a24b0d6fc?source=collection_link"
+    "name": "SIREKPEL API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" },
+    { "key": "token", "value": "admintoken" },
+    { "key": "peserta_id", "value": "1" },
+    { "key": "pelatihan_id", "value": "1" },
+    { "key": "kategori_id", "value": "1" },
+    { "key": "keahlian_id", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
   },
   "item": [
     {
-      "name": "Admin Peserta Riwayat",
-      "event": [
+      "name": "Auth",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});"
-            ],
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {}
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"User SIREKPEL\",\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}" },
+            "url": "{{base_url}}/api/register"
           }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://127.0.0.1:8000/admin/peserta/riwayat?id=1",
-          "protocol": "http",
-          "host": [
-            "127",
-            "0",
-            "0",
-            "1"
-          ],
-          "port": "8000",
-          "path": [
-            "admin",
-            "peserta",
-            "riwayat"
-          ],
-          "query": [
-            {
-              "key": "id",
-              "value": "1"
-            }
-          ]
         },
-        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-      },
-      "response": []
-    },
-    {
-      "name": "Post data",
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Successful POST request\", function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-              "});",
-              ""
-            ],
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {}
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"email\": \"admin@example.com\", \"password\": \"password\"}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
+          "name": "Login",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const json = pm.response.json();", "if (json.data && json.data.token) {", "  pm.collectionVariables.set('token', json.data.token);", "  pm.environment.set('token', json.data.token);", "}"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password\"\n}" },
+            "url": "{{base_url}}/api/login"
           }
         },
-        "url": {
-          "raw": "http://127.0.0.1:8000/admin/login",
-          "protocol": "http",
-          "host": [
-            "127",
-            "0",
-            "0",
-            "1"
-          ],
-          "port": "8000",
-          "path": [
-            "admin",
-            "login"
-          ]
-        },
-        "description": "Ini adalah permintaan POST, yang mengirimkan data ke API melalui body permintaan. Permintaan ini mengirimkan data JSON, dan data tersebut tercermin dalam respons.\n\nPermintaan POST yang berhasil biasanya mengembalikan kode respons `200 OK` atau `201 Created`."
-      },
-      "response": []
+        { "name": "Me", "request": { "method": "GET", "url": "{{base_url}}/api/me" } },
+        { "name": "Logout", "request": { "method": "POST", "url": "{{base_url}}/api/logout" } }
+      ]
     },
     {
-      "name": "Admin Login",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
+      "name": "Master Data",
+      "item": [
+        { "name": "List Kategori", "request": { "method": "GET", "url": "{{base_url}}/api/kategori" } },
+        { "name": "Create Kategori", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nama\": \"Teknologi\",\n  \"deskripsi\": \"Kategori teknologi\"\n}" }, "url": "{{base_url}}/api/kategori" } },
+        { "name": "List Keahlian", "request": { "method": "GET", "url": "{{base_url}}/api/keahlian" } },
+        { "name": "Create Keahlian", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"kategori_id\": {{kategori_id}},\n  \"nama\": \"Laravel\",\n  \"deskripsi\": \"Framework PHP\"\n}" }, "url": "{{base_url}}/api/keahlian" } }
+      ]
     },
     {
-      "name": "User Login",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
+      "name": "Pelatihan",
+      "item": [
+        { "name": "List Pelatihan", "request": { "method": "GET", "url": "{{base_url}}/api/pelatihan" } },
+        { "name": "Create Pelatihan", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"judul\": \"Pelatihan Laravel\",\n  \"deskripsi\": \"Belajar Laravel API\",\n  \"kategori\": \"Teknologi\",\n  \"level\": \"Pemula\",\n  \"durasi\": \"3 Hari\",\n  \"sertifikat\": \"Ya\",\n  \"tanggal_mulai\": \"2026-07-01\",\n  \"tanggal_selesai\": \"2026-07-03\",\n  \"is_active\": true,\n  \"keahlian_ids\": [{{keahlian_id}}]\n}" }, "url": "{{base_url}}/api/pelatihan" } },
+        { "name": "Detail Pelatihan", "request": { "method": "GET", "url": "{{base_url}}/api/pelatihan/{{pelatihan_id}}" } },
+        { "name": "Daftar Pelatihan", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"peserta_id\": {{peserta_id}}\n}" }, "url": "{{base_url}}/api/pelatihan/{{pelatihan_id}}/pendaftaran" } }
+      ]
     },
     {
-      "name": "User Register",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "User Dashboard",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Dashboard",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Pelatihan Create",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Mentor Create",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Peserta Create",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Pendaftaran Create",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Pelatihan Edit",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Mentor Edit",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
-    },
-    {
-      "name": "Admin Peserta Edit",
-      "request": {
-        "method": "GET",
-        "header": []
-      },
-      "response": []
+      "name": "Peserta & Rekomendasi",
+      "item": [
+        { "name": "Create Peserta", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nama\": \"Peserta Satu\",\n  \"email\": \"peserta@example.com\",\n  \"telepon\": \"08123456789\",\n  \"keahlian\": \"PHP\"\n}" }, "url": "{{base_url}}/api/peserta" } },
+        { "name": "Set Keahlian Peserta", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"keahlian\": [\n    { \"id\": {{keahlian_id}}, \"level\": \"Dasar\" }\n  ]\n}" }, "url": "{{base_url}}/api/peserta/{{peserta_id}}/keahlian" } },
+        { "name": "Riwayat Peserta", "request": { "method": "GET", "url": "{{base_url}}/api/peserta/{{peserta_id}}/riwayat" } },
+        { "name": "Rekomendasi", "request": { "method": "GET", "url": "{{base_url}}/api/rekomendasi?peserta_id={{peserta_id}}" } }
+      ]
     }
   ]
 }

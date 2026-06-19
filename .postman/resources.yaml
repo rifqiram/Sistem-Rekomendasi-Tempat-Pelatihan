@@ -1,0 +1,15 @@
+# Use this workspace to collaborate
+workspace:
+  id: d9adac50-2cf1-456d-8825-220d7347277e
+
+localResources:
+  collections:
+    - ..\SIREKPEL_Collection.json
+    - ..\public\docs\My Collection.postman_collection.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ..\postman\collections\SIREKPEL API: bd4f5a77-39f8-4c00-b5c2-c6a648d9d5b2
+    ..\postman\collections\SIREKPEL API Copy: 4c6119e7-bf63-4220-b224-ecbf1c2f513d

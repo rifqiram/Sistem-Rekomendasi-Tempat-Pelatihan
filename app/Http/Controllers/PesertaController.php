@@ -9,24 +9,21 @@ use Illuminate\Http\Request;
 
 class PesertaController extends Controller
 {
-    public function __construct()
+    public function index(Request $request)
     {
-        $this->middleware(function ($request, $next) {
-            if ($response = $this->authorizeAdmin($request)) {
-                return $response;
-            }
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
 
-            return $next($request);
-        });
-    }
-
-    public function index()
-    {
-        return PesertaResource::collection(Peserta::all());
+        return $this->successResponse(PesertaResource::collection(Peserta::all()), 'Data peserta berhasil diambil');
     }
 
     public function store(Request $request)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:tabel_peserta,email',
@@ -34,15 +31,14 @@ class PesertaController extends Controller
             'keahlian' => 'nullable|string|max:255',
         ]);
 
-
         $peserta = Peserta::create($data);
 
-        return new PesertaResource($peserta);
+        return $this->successResponse(new PesertaResource($peserta), 'Peserta berhasil dibuat', 201);
     }
 
     public function show(Peserta $peserta)
     {
-        return new PesertaResource($peserta);
+        return $this->successResponse(new PesertaResource($peserta), 'Detail peserta berhasil diambil');
     }
 
     public function update(Request $request, Peserta $peserta)
@@ -54,25 +50,31 @@ class PesertaController extends Controller
             'keahlian' => 'nullable|string|max:255',
         ]);
 
-
         $peserta->update($data);
 
-        return new PesertaResource($peserta);
+        return $this->successResponse(new PesertaResource($peserta), 'Peserta berhasil diperbarui');
     }
 
-    public function destroy(Peserta $peserta)
+    public function destroy(Request $request, Peserta $peserta)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         if ($peserta->pendaftarans()->exists()) {
-            return response()->json(['message' => 'Masih Ada Peserta!'], 400);
+            return $this->errorResponse('Masih ada pendaftaran peserta', 400);
         }
 
         $peserta->delete();
 
-        return response()->noContent();
+        return $this->successResponse(null, 'Peserta berhasil dihapus');
     }
 
     public function riwayat(Peserta $peserta)
     {
-        return PendaftaranResource::collection($peserta->pendaftarans()->with('pelatihan.mentor')->get());
+        return $this->successResponse(
+            PendaftaranResource::collection($peserta->pendaftarans()->with('pelatihan.mentor')->get()),
+            'Riwayat pelatihan berhasil diambil'
+        );
     }
 }

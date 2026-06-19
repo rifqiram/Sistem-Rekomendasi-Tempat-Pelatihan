@@ -44,4 +44,10 @@ class Pelatihan extends Model
             ->withTimestamps()
             ->withPivot(['status', 'tanggal_daftar']);
     }
+
+    public function keahlians()
+    {
+        return $this->belongsToMany(Keahlian::class, 'tabel_pelatihan_keahlian', 'pelatihan_id', 'keahlian_id')
+            ->withTimestamps();
+    }
 }

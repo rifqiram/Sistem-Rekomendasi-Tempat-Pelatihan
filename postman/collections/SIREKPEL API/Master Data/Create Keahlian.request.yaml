@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url}}/api/keahlian"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "kategori_id": {{kategori_id}},
+      "nama": "Laravel",
+      "deskripsi": "Framework PHP"
+    }
+order: 4000

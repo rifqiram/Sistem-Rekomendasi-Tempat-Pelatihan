@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/rekomendasi?peserta_id={{peserta_id}}"
+method: GET
+queryParams:
+  peserta_id: "{{peserta_id}}"
+order: 4000

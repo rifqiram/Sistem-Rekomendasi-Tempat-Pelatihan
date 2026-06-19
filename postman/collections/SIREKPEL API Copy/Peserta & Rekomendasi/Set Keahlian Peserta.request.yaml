@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url}}/api/peserta/{{peserta_id}}/keahlian"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "keahlian": [
+        { "id": {{keahlian_id}}, "level": "Dasar" }
+      ]
+    }
+order: 2000

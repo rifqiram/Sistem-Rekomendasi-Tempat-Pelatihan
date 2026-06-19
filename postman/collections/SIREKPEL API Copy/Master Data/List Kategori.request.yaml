@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_url}}/api/kategori"
+method: GET
+order: 1000

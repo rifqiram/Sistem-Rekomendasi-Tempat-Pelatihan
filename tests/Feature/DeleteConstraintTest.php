@@ -8,26 +8,28 @@ use App\Models\Pelatihan;
 use App\Models\Pendaftaran;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class DeleteConstraintTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function authHeaders(string $token): array
+    private function actingAsAdmin(string $email = 'admin@example.com'): void
     {
-        return ['Authorization' => 'Bearer ' . $token];
+        $user = User::factory()->create([
+            'name' => 'Admin',
+            'email' => $email,
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+
+        Sanctum::actingAs($user);
     }
 
     public function test_admin_cannot_delete_pelatihan_with_existing_pendaftaran(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => 'password',
-            'role' => 'admin',
-            'api_token' => 'admintoken',
-        ]);
+        $this->actingAsAdmin();
 
         $mentor = Mentor::create([
             'nama' => 'Mentor Satu',
@@ -59,21 +61,14 @@ class DeleteConstraintTest extends TestCase
             'status' => 'terdaftar',
         ]);
 
-        $this->withHeaders($this->authHeaders($user->api_token))
-            ->deleteJson("/api/pelatihan/{$pelatihan->id}")
+        $this->deleteJson("/api/pelatihan/{$pelatihan->id}")
             ->assertStatus(400)
-            ->assertJson(['message' => 'Masih Ada Peserta!']);
+            ->assertJsonPath('message', 'Masih ada peserta terdaftar');
     }
 
     public function test_admin_cannot_delete_peserta_with_existing_pendaftaran(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin2@example.com',
-            'password' => 'password',
-            'role' => 'admin',
-            'api_token' => 'admintoken2',
-        ]);
+        $this->actingAsAdmin('admin2@example.com');
 
         $mentor = Mentor::create([
             'nama' => 'Mentor Dua',
@@ -105,21 +100,14 @@ class DeleteConstraintTest extends TestCase
             'status' => 'terdaftar',
         ]);
 
-        $this->withHeaders($this->authHeaders($user->api_token))
-            ->deleteJson("/api/peserta/{$peserta->id}")
+        $this->deleteJson("/api/peserta/{$peserta->id}")
             ->assertStatus(400)
-            ->assertJson(['message' => 'Masih Ada Peserta!']);
+            ->assertJsonPath('message', 'Masih ada pendaftaran peserta');
     }
 
     public function test_admin_cannot_delete_mentor_with_existing_pelatihan(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin3@example.com',
-            'password' => 'password',
-            'role' => 'admin',
-            'api_token' => 'admintoken3',
-        ]);
+        $this->actingAsAdmin('admin3@example.com');
 
         $mentor = Mentor::create([
             'nama' => 'Mentor Tiga',
@@ -137,21 +125,14 @@ class DeleteConstraintTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->withHeaders($this->authHeaders($user->api_token))
-            ->deleteJson("/api/mentor/{$mentor->id}")
+        $this->deleteJson("/api/mentor/{$mentor->id}")
             ->assertStatus(400)
-            ->assertJson(['message' => 'Masih Ada Kelas!']);
+            ->assertJsonPath('message', 'Masih ada kelas untuk mentor ini');
     }
 
     public function test_admin_can_delete_pendaftaran_directly(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin4@example.com',
-            'password' => 'password',
-            'role' => 'admin',
-            'api_token' => 'admintoken4',
-        ]);
+        $this->actingAsAdmin('admin4@example.com');
 
         $mentor = Mentor::create([
             'nama' => 'Mentor Empat',
@@ -183,8 +164,8 @@ class DeleteConstraintTest extends TestCase
             'status' => 'terdaftar',
         ]);
 
-        $this->withHeaders($this->authHeaders($user->api_token))
-            ->deleteJson("/api/pendaftaran/{$pendaftaran->id}")
-            ->assertNoContent();
+        $this->deleteJson("/api/pendaftaran/{$pendaftaran->id}")
+            ->assertOk()
+            ->assertJsonPath('message', 'Pendaftaran berhasil dihapus');
     }
 }

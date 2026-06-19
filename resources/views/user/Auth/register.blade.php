@@ -101,9 +101,10 @@
                 },
             });
             if (!response.ok) return;
-            const data = await response.json();
-            setApiUser(data.user);
-            window.location.href = data.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+            const payload = await response.json();
+            const user = payload.data?.user ?? payload.user;
+            setApiUser(user);
+            window.location.href = user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
         } catch (error) {}
     }
 
@@ -150,7 +151,8 @@
                 return;
             }
 
-            const data = await response.json();
+            const payload = await response.json();
+            const data = payload.data ?? payload;
             setApiToken(data.token);
             setApiUser(data.user);
             window.location.href = '/user/dashboard';

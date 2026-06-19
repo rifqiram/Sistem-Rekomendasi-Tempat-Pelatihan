@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -26,8 +27,12 @@ class AuthTest extends TestCase
 
         $response->assertOk()
             ->assertJsonStructure([
-                'token',
-                'user' => ['id', 'name', 'email', 'role'],
+                'success',
+                'message',
+                'data' => [
+                    'token',
+                    'user' => ['id', 'name', 'email', 'role'],
+                ],
             ]);
     }
 
@@ -38,15 +43,13 @@ class AuthTest extends TestCase
             'email' => 'admin@example.com',
             'password' => 'password',
             'role' => 'admin',
-            'api_token' => 'testtoken',
         ]);
 
-        $response = $this->withHeader('Authorization', 'Bearer testtoken')
-            ->postJson('/api/logout');
+        Sanctum::actingAs($user);
 
-        $response->assertOk()
-            ->assertJson(['message' => 'Logged out successfully']);
-
-        $this->assertNull($user->fresh()->api_token);
+        $this->postJson('/api/logout')
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('message', 'Logout berhasil');
     }
 }

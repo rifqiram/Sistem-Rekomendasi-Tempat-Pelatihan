@@ -7,16 +7,12 @@ use App\Models\Peserta;
 use App\Models\Pelatihan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PendaftaranTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function authHeaders(string $token): array
-    {
-        return ['Authorization' => 'Bearer ' . $token];
-    }
 
     public function test_admin_can_manage_pendaftaran(): void
     {
@@ -25,8 +21,9 @@ class PendaftaranTest extends TestCase
             'email' => 'admin@example.com',
             'password' => 'password',
             'role' => 'admin',
-            'api_token' => 'admintoken',
         ]);
+
+        Sanctum::actingAs($user);
 
         $mentor = Mentor::create([
             'nama' => 'Mentor Dua',
@@ -51,13 +48,12 @@ class PendaftaranTest extends TestCase
             'keahlian' => 'PT Contoh',
         ]);
 
-        $response = $this->withHeaders($this->authHeaders($user->api_token))
-            ->postJson('/api/pendaftaran', [
-                'peserta_id' => $peserta->id,
-                'pelatihan_id' => $pelatihan->id,
-                'tanggal_daftar' => '2026-06-20',
-                'status' => 'terdaftar',
-            ]);
+        $response = $this->postJson('/api/pendaftaran', [
+            'peserta_id' => $peserta->id,
+            'pelatihan_id' => $pelatihan->id,
+            'tanggal_daftar' => '2026-06-20',
+            'status' => 'terdaftar',
+        ]);
 
         $response->assertCreated()
             ->assertJsonPath('data.peserta.id', $peserta->id)
@@ -66,15 +62,13 @@ class PendaftaranTest extends TestCase
 
         $pendaftaranId = $response->json('data.id');
 
-        $this->withHeaders($this->authHeaders($user->api_token))
-            ->putJson("/api/pendaftaran/{$pendaftaranId}", [
-                'status' => 'lulus',
-            ])
+        $this->putJson("/api/pendaftaran/{$pendaftaranId}", [
+            'status' => 'lulus',
+        ])
             ->assertOk()
             ->assertJsonPath('data.status', 'lulus');
 
-        $this->withHeaders($this->authHeaders($user->api_token))
-            ->getJson("/api/peserta/{$peserta->id}/riwayat")
+        $this->getJson("/api/peserta/{$peserta->id}/riwayat")
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.pelatihan.id', $pelatihan->id);

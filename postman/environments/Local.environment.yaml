@@ -1,0 +1,10 @@
+name: Local
+values:
+  - key: base_url
+    value: 'http://localhost'
+    type: default
+    enabled: true
+  - key: api_token
+    value: admintoken
+    type: default
+    enabled: true

@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_url}}/api/peserta/{{peserta_id}}/riwayat"
+method: GET
+order: 3000

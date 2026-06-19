@@ -17,6 +17,7 @@ class PelatihanResource extends JsonResource
             'durasi' => $this->durasi,
             'sertifikat' => $this->sertifikat,
             'mentor' => new MentorResource($this->whenLoaded('mentor')),
+            'keahlian' => KeahlianResource::collection($this->whenLoaded('keahlians')),
             'tanggal_mulai' => $this->tanggal_mulai?->toDateString(),
             'tanggal_selesai' => $this->tanggal_selesai?->toDateString(),
             'is_active' => (bool) $this->is_active,

@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{base_url}}/api/pelatihan"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "judul": "Pelatihan Laravel",
+      "deskripsi": "Belajar Laravel API",
+      "kategori": "Teknologi",
+      "level": "Pemula",
+      "durasi": "3 Hari",
+      "sertifikat": "Ya",
+      "tanggal_mulai": "2026-07-01",
+      "tanggal_selesai": "2026-07-03",
+      "is_active": true,
+      "keahlian_ids": [{{keahlian_id}}]
+    }
+order: 2000

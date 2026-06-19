@@ -8,43 +8,62 @@ use Illuminate\Http\Request;
 
 class PendaftaranController extends Controller
 {
-    public function __construct()
+    public function index(Request $request)
     {
-        $this->middleware(function ($request, $next) {
-            if ($response = $this->authorizeAdmin($request)) {
-                return $response;
-            }
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
 
-            return $next($request);
-        });
-    }
-
-    public function index()
-    {
-        return PendaftaranResource::collection(Pendaftaran::with(['peserta', 'pelatihan.mentor'])->get());
+        return $this->successResponse(
+            PendaftaranResource::collection(Pendaftaran::with(['peserta', 'pelatihan.mentor'])->get()),
+            'Data pendaftaran berhasil diambil'
+        );
     }
 
     public function store(Request $request)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         $data = $request->validate([
             'peserta_id' => 'required|exists:tabel_peserta,id',
             'pelatihan_id' => 'required|exists:tabel_pelatihan,id',
-            'tanggal_daftar' => 'required|date',
-            'status' => 'required|string|max:50',
+            'tanggal_daftar' => 'nullable|date',
+            'status' => 'nullable|string|max:50',
         ]);
+
+        $exists = Pendaftaran::where('peserta_id', $data['peserta_id'])
+            ->where('pelatihan_id', $data['pelatihan_id'])
+            ->exists();
+
+        if ($exists) {
+            return $this->errorResponse('Peserta sudah terdaftar pada pelatihan ini', 409);
+        }
+
+        $data['tanggal_daftar'] = $data['tanggal_daftar'] ?? now();
+        $data['status'] = $data['status'] ?? 'terdaftar';
 
         $pendaftaran = Pendaftaran::create($data);
 
-        return new PendaftaranResource($pendaftaran->load(['peserta', 'pelatihan.mentor']));
+        return $this->successResponse(new PendaftaranResource($pendaftaran->load(['peserta', 'pelatihan.mentor'])), 'Pendaftaran berhasil dibuat', 201);
     }
 
-    public function show(Pendaftaran $pendaftaran)
+    public function show(Request $request, Pendaftaran $pendaftaran)
     {
-        return new PendaftaranResource($pendaftaran->load(['peserta', 'pelatihan.mentor']));
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
+        return $this->successResponse(new PendaftaranResource($pendaftaran->load(['peserta', 'pelatihan.mentor'])), 'Detail pendaftaran berhasil diambil');
     }
 
     public function update(Request $request, Pendaftaran $pendaftaran)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         $data = $request->validate([
             'peserta_id' => 'sometimes|required|exists:tabel_peserta,id',
             'pelatihan_id' => 'sometimes|required|exists:tabel_pelatihan,id',
@@ -54,13 +73,17 @@ class PendaftaranController extends Controller
 
         $pendaftaran->update($data);
 
-        return new PendaftaranResource($pendaftaran->load(['peserta', 'pelatihan.mentor']));
+        return $this->successResponse(new PendaftaranResource($pendaftaran->load(['peserta', 'pelatihan.mentor'])), 'Pendaftaran berhasil diperbarui');
     }
 
-    public function destroy(Pendaftaran $pendaftaran)
+    public function destroy(Request $request, Pendaftaran $pendaftaran)
     {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
         $pendaftaran->delete();
 
-        return response()->noContent();
+        return $this->successResponse(null, 'Pendaftaran berhasil dihapus');
     }
 }

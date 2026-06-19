@@ -26,4 +26,11 @@ class Peserta extends Model
             ->withTimestamps()
             ->withPivot(['status', 'tanggal_daftar']);
     }
+
+    public function keahlians()
+    {
+        return $this->belongsToMany(Keahlian::class, 'tabel_peserta_keahlian', 'peserta_id', 'keahlian_id')
+            ->withPivot('level')
+            ->withTimestamps();
+    }
 }

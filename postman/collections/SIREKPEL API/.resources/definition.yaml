@@ -1,0 +1,14 @@
+$kind: collection
+variables:
+  base_url: http://127.0.0.1:8000
+  token: admintoken
+  peserta_id: "1"
+  pelatihan_id: "1"
+  kategori_id: "1"
+  keahlian_id: "1"
+auth:
+  - id: fb036140-b516-47c0-b8cf-77b887c0a4b2
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{token}}"

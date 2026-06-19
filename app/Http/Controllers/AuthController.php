@@ -6,7 +6,6 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -20,23 +19,22 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return $this->errorResponse('Email atau password salah', 401);
         }
 
-        $user->api_token = Str::random(60);
-        $user->save();
+        $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json([
-            'token' => $user->api_token,
+        return $this->successResponse([
+            'token' => $token,
             'user' => new UserResource($user),
-        ]);
+        ], 'Login berhasil');
     }
 
     public function me(Request $request)
     {
-        return response()->json([
-            'user' => new UserResource($request->user('api')),
-        ]);
+        return $this->successResponse([
+            'user' => new UserResource($request->user()),
+        ], 'Data user berhasil diambil');
     }
 
     public function register(Request $request)
@@ -45,12 +43,13 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:tabel_users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'sometimes|in:admin,user',
+            'role' => 'sometimes|in:admin,user,pencari_kerja',
         ]);
 
-        $role = 'user';
+        $requestedRole = $data['role'] ?? 'user';
+        $role = in_array($requestedRole, ['user', 'pencari_kerja'], true) ? 'user' : 'user';
 
-        if ($request->user('api') && $request->user('api')->role === 'admin' && ($data['role'] ?? 'user') === 'admin') {
+        if ($request->user()?->role === 'admin' && $requestedRole === 'admin') {
             $role = 'admin';
         }
 
@@ -59,24 +58,21 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => $data['password'],
             'role' => $role,
-            'api_token' => Str::random(60),
+            'api_token' => \Illuminate\Support\Str::random(60),
         ]);
 
-        return response()->json([
-            'token' => $user->api_token,
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return $this->successResponse([
+            'token' => $token,
             'user' => new UserResource($user),
-        ], 201);
+        ], 'Register berhasil', 201);
     }
 
     public function logout(Request $request)
     {
-        $user = $request->user('api');
+        $request->user()?->currentAccessToken()?->delete();
 
-        if ($user) {
-            $user->api_token = null;
-            $user->save();
-        }
-
-        return response()->json(['message' => 'Logged out successfully']);
+        return $this->successResponse(null, 'Logout berhasil');
     }
 }

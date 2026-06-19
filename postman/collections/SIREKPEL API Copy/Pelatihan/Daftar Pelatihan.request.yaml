@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{base_url}}/api/pelatihan/{{pelatihan_id}}/pendaftaran"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "peserta_id": {{peserta_id}}
+    }
+order: 4000

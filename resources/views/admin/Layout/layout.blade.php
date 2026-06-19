@@ -609,7 +609,7 @@
     </div>
 
     <script>
-        window.apiBase = '{{ url('/api') }}';
+        window.apiBase = window.location.origin + '{{ request()->getBaseUrl() }}/api';
         window.getApiToken = function () {
             return localStorage.getItem('api_token');
         };

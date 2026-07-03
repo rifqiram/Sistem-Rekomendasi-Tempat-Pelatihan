@@ -15,17 +15,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Setup Admin User
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
             'role' => 'admin',
             'api_token' => 'admintoken',
+            'is_active' => true,
         ]);
 
         $this->call([
-            MentorSeeder::class,
+            TrainingCenterSeeder::class,
             PelatihanSeeder::class,
+            RecommendationScenarioSeeder::class,
+            EnrollmentSeeder::class,
+            LogActivitySeeder::class,
         ]);
     }
 }

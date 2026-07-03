@@ -6,6 +6,7 @@ use App\Http\Resources\PelatihanResource;
 use App\Http\Resources\PendaftaranResource;
 use App\Models\Pelatihan;
 use App\Models\Pendaftaran;
+use App\Models\TrainingCenter;
 use Illuminate\Http\Request;
 
 class PelatihanController extends Controller
@@ -13,7 +14,7 @@ class PelatihanController extends Controller
     public function index()
     {
         return $this->successResponse(
-            PelatihanResource::collection(Pelatihan::with(['mentor', 'keahlians.kategori'])->get()),
+            PelatihanResource::collection(Pelatihan::with(['trainingCenter', 'keahlians.kategori'])->get()),
             'Data pelatihan berhasil diambil'
         );
     }
@@ -24,14 +25,22 @@ class PelatihanController extends Controller
             return $response;
         }
 
+        if (TrainingCenter::count() === 0) {
+            return $this->errorResponse('Silakan tambahkan Tempat Pelatihan terlebih dahulu.', [], 400);
+        }
+
         $data = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'interest_category' => 'nullable|string',
+            'method' => 'nullable|string',
+            'required_skill' => 'nullable|string',
+            'popularity' => 'nullable|integer',
             'kategori' => 'nullable|string',
             'level' => 'nullable|string',
             'durasi' => 'nullable|string',
             'sertifikat' => 'nullable|string',
-            'mentor_id' => 'nullable|exists:tabel_mentor,id',
+            'training_center_id' => 'required|exists:training_centers,id',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'status' => 'nullable|string',
@@ -47,13 +56,13 @@ class PelatihanController extends Controller
         $pelatihan = Pelatihan::create($data);
         $pelatihan->keahlians()->sync($keahlianIds);
 
-        return $this->successResponse(new PelatihanResource($pelatihan->load(['mentor', 'keahlians.kategori'])), 'Pelatihan berhasil dibuat', 201);
+        return $this->successResponse(new PelatihanResource($pelatihan->load(['trainingCenter', 'keahlians.kategori'])), 'Pelatihan berhasil dibuat', 201);
     }
 
     public function show(Pelatihan $pelatihan)
     {
         return $this->successResponse(
-            new PelatihanResource($pelatihan->load(['mentor', 'keahlians.kategori', 'pendaftarans.peserta'])),
+            new PelatihanResource($pelatihan->load(['trainingCenter', 'keahlians.kategori', 'pendaftarans.peserta'])),
             'Detail pelatihan berhasil diambil'
         );
     }
@@ -67,11 +76,15 @@ class PelatihanController extends Controller
         $data = $request->validate([
             'judul' => 'sometimes|required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'interest_category' => 'nullable|string',
+            'method' => 'nullable|string',
+            'required_skill' => 'nullable|string',
+            'popularity' => 'nullable|integer',
             'kategori' => 'nullable|string',
             'level' => 'nullable|string',
             'durasi' => 'nullable|string',
             'sertifikat' => 'nullable|string',
-            'mentor_id' => 'nullable|exists:tabel_mentor,id',
+            'training_center_id' => 'sometimes|required|exists:training_centers,id',
             'tanggal_mulai' => 'sometimes|required|date',
             'tanggal_selesai' => 'sometimes|required|date|after_or_equal:tanggal_mulai',
             'status' => 'nullable|string',
@@ -89,7 +102,7 @@ class PelatihanController extends Controller
             $pelatihan->keahlians()->sync($keahlianIds);
         }
 
-        return $this->successResponse(new PelatihanResource($pelatihan->load(['mentor', 'keahlians.kategori'])), 'Pelatihan berhasil diperbarui');
+        return $this->successResponse(new PelatihanResource($pelatihan->load(['trainingCenter', 'keahlians.kategori'])), 'Pelatihan berhasil diperbarui');
     }
 
     public function destroy(Request $request, Pelatihan $pelatihan)
@@ -128,6 +141,6 @@ class PelatihanController extends Controller
             'status' => 'terdaftar',
         ]);
 
-        return $this->successResponse(new PendaftaranResource($pendaftaran->load('peserta', 'pelatihan.mentor')), 'Pendaftaran berhasil dibuat', 201);
+        return $this->successResponse(new PendaftaranResource($pendaftaran->load('peserta', 'pelatihan.trainingCenter')), 'Pendaftaran berhasil dibuat', 201);
     }
 }

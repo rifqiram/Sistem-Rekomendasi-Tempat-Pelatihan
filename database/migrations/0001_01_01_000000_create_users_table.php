@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('role')->default('user');
             $table->string('password');
             $table->string('api_token', 80)->nullable()->unique();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -44,7 +45,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('tabel_users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

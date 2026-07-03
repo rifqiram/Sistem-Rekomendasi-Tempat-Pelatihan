@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\LogActivity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $data = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        $data = $request->validated();
 
         $user = User::where('email', $data['email'])->first();
 
@@ -23,6 +23,11 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('api-token')->plainTextToken;
+
+        LogActivity::create([
+            'user_id' => $user->id,
+            'activity_type' => 'login',
+        ]);
 
         return $this->successResponse([
             'token' => $token,
@@ -37,14 +42,9 @@ class AuthController extends Controller
         ], 'Data user berhasil diambil');
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:tabel_users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'sometimes|in:admin,user,pencari_kerja',
-        ]);
+        $data = $request->validated();
 
         $requestedRole = $data['role'] ?? 'user';
         $role = in_array($requestedRole, ['user', 'pencari_kerja'], true) ? 'user' : 'user';
@@ -71,7 +71,13 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()?->currentAccessToken()?->delete();
+        if ($request->user()) {
+            LogActivity::create([
+                'user_id' => $request->user()->id,
+                'activity_type' => 'logout',
+            ]);
+            $request->user()->currentAccessToken()?->delete();
+        }
 
         return $this->successResponse(null, 'Logout berhasil');
     }

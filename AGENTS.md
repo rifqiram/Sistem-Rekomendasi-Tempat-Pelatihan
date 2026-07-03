@@ -1,128 +1,131 @@
 # AGENTS.md
 
 ## Tujuan
+Project ini merupakan Sistem Rekomendasi Tempat Pelatihan berbasis Rule-Based Scoring.
+Sistem ini membuang arsitektur lama (Mentor, Peserta, Pendaftaran Manual) dan sepenuhnya mengadopsi arsitektur desentralisasi via REST API V2 (Training Center, Pelatihan, Profile User, Questionnaire, Enrollment Rekomendasi).
 
-Project ini mengadopsi teknikal SIREKPEL tanpa rombak total. Struktur lama (`mentor`, `peserta`, `pelatihan`, `pendaftaran`) tetap digunakan, lalu ditambah entitas teknikal rekomendasi:
+Sistem menggunakan data Profile, QuestionnaireResponse, dan Pelatihan untuk menghasilkan rekomendasi yang dipersonalisasi. Rekomendasi dikompilasi (diagregasi) dari tingkat Pelatihan ke tingkat entitas *Training Center* (TC).
 
-- `kategori`
-- `keahlian`
-- `pelatihan_keahlian`
-- `peserta_keahlian`
-- endpoint rekomendasi
+## Status Terkini (FINAL)
+Seluruh lapisan aplikasi, mulai dari Database, Logic Backend, REST API, hingga Frontend (Admin Panel & User UI) **telah diselesaikan 100% dan terintegrasi secara E2E (End-to-End)**. Tidak ada lagi sisa-sisa *legacy code* atau UI jadul yang mengganggu.
 
-## Prinsip Implementasi
+---
 
-- API-only changes berada di `routes/api.php` dan controller terkait.
-- Response API wajib memakai envelope:
+## 1. Arsitektur Logic Backend (Recommendation Engine)
+Recommendation dihitung oleh `RecommendationEngine` menggunakan tiga fase berurutan:
 
-```json
-{
-  "success": true,
-  "message": "...",
-  "data": {}
-}
-```
+1. **Phase 1: Hard Filter**
+   - Mengeliminasi Pelatihan yang `is_active` = false atau tidak memiliki `training_center_id`.
+   - Melakukan filter ketat berdasarkan preferensi Kuesioner User (Bidang/Kategori, Metode [Online/Offline/Hybrid], dan Tingkat Keahlian).
+   - *Catatan: Hybrid dianggap selalu match dengan preferensi Online/Offline.*
 
-- Error response:
+2. **Phase 2: Weighted Scoring & Aggregation**
+   Skor dasar dihitung dari masing-masing Pelatihan yang lolos *Hard Filter*:
+   - **Bidang Diminati:** 35%
+   - **Skill Match:** 20%
+   - **Metode Match:** 15%
+   - **Popularitas:** 10%
+   
+   *Aggregasi:* Jika satu Training Center memiliki banyak pelatihan yang *match*, Engine hanya mengambil **skor tertinggi** untuk mewakili TC tersebut.
+   
+   *Distance Calculation (Haversine Formula):* 20%
+   - Menghitung jarak lurus (berdasarkan lengkung bumi) antara Latitude & Longitude Profile User ke Latitude & Longitude Training Center.
+   - Jarak 0 km = +20 Poin. Jarak >= 100 km = 0 Poin.
+   
+   **Total Maksimal = 100%.**
 
-```json
-{
-  "success": false,
-  "message": "...",
-  "errors": {}
-}
-```
+3. **Phase 3: Persist Recommendation**
+   - Top 5 Training Center disimpan permanen ke tabel `recommendations`. 
+   - Endpoint frontend hanya bertugas menarik (GET) data dari tabel ini secara instan, menghemat beban *query* CPU di server.
 
-- Gunakan helper di `app/Http/Controllers/Controller.php`:
-  - `successResponse()`
-  - `errorResponse()`
-  - `authorizeAdmin()`
+---
 
-## Autentikasi (Dual Auth Mode)
+## 2. Alur Integrasi Sistem (Frontend ↔ Backend REST API)
 
-API menggunakan custom middleware `auth.sirekpel` yang mendukung dua metode login:
-1. **Laravel Sanctum** (token dinamis, format `1|xyz...`). Ideal untuk frontend web.
-2. **API Token / API Key Statis** (membaca kolom `api_token` di table `tabel_users`). Ideal untuk pengujian langsung di Postman atau integrasi luar. Token ini bisa dikirim via:
-   - Header `Authorization: Bearer <token>`
-   - Header `X-API-Key: <token>`
-   - Query parameter `?api_token=<token>`
+Integrasi telah berjalan secara *Decoupled Architecture*.
+- **Authentication:** `POST /api/login`. Menggunakan Laravel Sanctum. Menyimpan Token di `localStorage`. Di-*handle* oleh middleware kustom `SystemAuth`.
+- **Layout & Protection:** `window.authFetch` secara asinkron menyisipkan Header `Bearer Token`. Jika API mengembalikan 401, *Frontend UI* akan langsung *logout* paksa user.
+- **User Module:**
+  1. *Gatekeeper API:* Di `user/Dashboard/dashboard.blade.php`, sistem secara otomatis memanggil `GET /api/profile` dan `GET /api/questionnaire`. 
+  2. Jika profil kosong, *User* diarahkan ke `/user/profile` untuk input Demografi dan Map Pinpoint.
+  3. Jika kuesioner kosong, *User* diarahkan ke `/user/questionnaire`.
+  4. Submit Kuesioner via `POST /api/questionnaire` otomatis me-*trigger* kalkulasi `RecommendationEngine` di *background*.
+  5. *Recommendation UI:* Mengambil `GET /api/recommendations` dan me-render *Card TC* dengan persentase skor kecocokan dan jarak.
+  6. *Enrollment (Pendaftaran):* Mengklik Modal *Daftar* memanggil `POST /api/enrollments`. Hasilnya masuk ke riwayat pendaftaran.
+- **Admin Module:**
+  - Menggunakan UI/UX modern berbasis *AdminLTE v4*.
+  - Mengelola entitas dari *API Master Data* (`GET/POST/PUT/DELETE /api/training-centers` dan `/api/pelatihan`).
+  - *Dashboard Metrik* & *Activity Log* mengambil data *real-time* dari `GET /api/admin/stats` dan `GET /api/admin/log-activities`.
+  - Admin dapat memblokir/mengaktifkan kembali user via API `PATCH /api/admin/users/{id}/status`.
 
-### Akun Demo Default (Seeded)
-- **Role Admin**:
-  - Email: `admin@example.com`
-  - Password: `password`
-  - Static API Key: `admintoken` (bisa langsung digunakan di Postman!)
+---
 
-## Role
+## 3. Map Geolocation API
+- Frontend Profile User telah terintegrasi dengan **Leaflet.js (OpenStreetMap)**.
+- Fitur *Drag Pin* dan Klik titik pada peta.
+- Fitur **Reverse Geocoding**: Memanggil Nominatim API untuk menterjemahkan titik koordinat ke teks Alamat Lengkap dan Kecamatan secara otomatis (*Auto-fill*).
+- Fitur GPS (Browser Geolocation) tersemat di tombol *Gunakan Lokasi Saat Ini*.
 
-- `admin`: kelola master data dan delete/update data penting.
-- `user`: dipakai sebagai pencari kerja/peserta secara kompatibel dengan struktur lama.
+---
 
-## Entity SIREKPEL Tambahan
+## 4. Entity List & Relasi Database (V2 Core)
 
-Tabel tambahan:
+Sistem telah di-refactor menggunakan Relasi Eloquent (ORM) yang efisien:
 
-- `tabel_kategori`
-- `tabel_keahlian`
-- `tabel_pelatihan_keahlian`
-- `tabel_peserta_keahlian`
+- **`User`** (tabel: `tabel_users`)
+  - Menyimpan Credential (email, password), Role (`admin`, `user`), dan Status Aktif (`is_active`).
+  - *Relasi:* 
+    - `hasOne(Profile)`
+    - `hasOne(QuestionnaireResponse)`
+    - `hasMany(Recommendation)`
+    - `hasMany(Enrollment)`
+    - `hasMany(LogActivity)`
 
-Model tambahan:
+- **`Profile`** (tabel: `profiles`)
+  - Menyimpan Demografi (age, education) & Geospatial Koordinat (latitude, longitude, district).
+  - *Relasi:* `belongsTo(User)`
 
-- `App\Models\Kategori`
-- `App\Models\Keahlian`
+- **`QuestionnaireResponse`** (tabel: `questionnaire_responses`)
+  - Menyimpan JSON Jawaban Preferensi User (`bidang_diminati`, `tingkat_keahlian`, `metode_pelatihan`, `jarak_maksimal`).
+  - *Relasi:* `belongsTo(User)`
 
-Controller tambahan:
+- **`TrainingCenter`** (tabel: `training_centers`)
+  - Lembaga pelaksana, entitas induk untuk Pelatihan. Memiliki koordinat spasial untuk perhitungan jarak (Haversine).
+  - *Relasi:*
+    - `hasMany(Pelatihan)`
+    - `hasMany(Recommendation)`
+    - `hasMany(Enrollment)`
+    - `hasMany(LogActivity)`
 
-- `KategoriController`
-- `KeahlianController`
-- `ProfilKeahlianController`
-- `RekomendasiController`
+- **`Pelatihan`** (tabel: `tabel_pelatihan`)
+  - Produk/Kursus teknis. Menyumbangkan poin pada sistem melalui atribut skor (`interest_category`, `method`, `required_skill`, `popularity`).
+  - *Relasi:*
+    - `belongsTo(TrainingCenter)` (Otomatis Cascade Delete)
+    - `hasMany(Enrollment)`
+    - `hasMany(LogActivity)`
 
-## Endpoint Penting
+- **`Recommendation`** (tabel: `recommendations`)
+  - Tabel temporer/statis penampung Top-5 hasil komputasi *Engine*.
+  - Menyimpan field `score` (0-100), `distance` (km), dan `rank`.
+  - *Relasi:* `belongsTo(User)`, `belongsTo(TrainingCenter)`
 
-```txt
-POST   /api/login
-POST   /api/register
-GET    /api/me
-POST   /api/logout
-GET    /api/kategori
-POST   /api/kategori
-GET    /api/keahlian
-POST   /api/keahlian
-GET    /api/pelatihan
-POST   /api/pelatihan
-GET    /api/peserta/{peserta}/keahlian
-PUT    /api/peserta/{peserta}/keahlian
-GET    /api/rekomendasi?peserta_id=1
-POST   /api/pelatihan/{pelatihan}/pendaftaran
-GET    /api/peserta/{peserta}/riwayat
-```
+- **`Enrollment`** (tabel: `enrollments`)
+  - Bukti keberhasilan (konversi) rekomendasi menjadi Pendaftaran Aktual.
+  - *Relasi:* `belongsTo(User)`, `belongsTo(TrainingCenter)`, `belongsTo(Pelatihan)`
 
-## Rekomendasi Logic
+- **`LogActivity`** (tabel: `log_activities`)
+  - Jejak audit aktivitas user dalam sistem (Tracking: Login, Enroll).
+  - *Relasi:* `belongsTo(User)`, `belongsTo(TrainingCenter)`, `belongsTo(Pelatihan)`
 
-`RekomendasiController@index`:
+---
 
-- input: `peserta_id`
-- ambil keahlian peserta
-- ambil pelatihan aktif
-- exclude pelatihan yang sudah didaftari peserta
-- hitung `matched_skills`, `missing_skills`, `match_count`, `gap_count`, `score`
-- sort by `score` descending
+## 5. Security & Technical Debt (Selesai/Dihapus)
+- [x] Perubahan branding UI dan Middleware menjadi "Sistem Rekomendasi Tempat Pelatihan (SRTP)".
+- [x] Seluruh *Sisa Legacy Mentor* dihapus total (Migration, Models, Controllers, Seeders, View Blade).
+- [x] Tabel-tabel *Pendaftaran Manual* dan *Peserta* dihapus total dari Views.
+- [x] Impelementasi `Global Exception Handler` dengan format Response JSON ketat untuk menangkal Error Leakage ke Frontend.
+- [x] API Security: API diproteksi ketat menggunakan `Laravel Sanctum`.
+- [x] Security Policy: Middleware kustom memfilter Hak Akses agar akun bertipe 'user' tidak bisa membaca endpoint maupun memanipulasi UI Admin, begitu pun sebaliknya.
+- [x] Perbaikan *Error 403 HTTP Interceptor* di frontend yang sebelumnya menghapus token secara tidak sengaja, kini ditangani dengan metode yang aman.
 
-## File Artefak
-
-- Postman Collection: `SIREKPEL_Collection.json` dan `public/docs/My Collection.postman_collection.json` (keduanya identik dan memiliki default token `admintoken`)
-- Dokumentasi markdown: `SIREKPEL_Dokumentasi_Baru.md`
-- Plan awal: `C:\Users\user\.claude\plans\atomic-orbiting-rain.md`
-
-## Verifikasi Wajib Setelah Perubahan
-
-```bash
-php artisan route:list --path=api
-php artisan migrate
-php artisan test
-```
-
-Status implementasi terakhir:
-- Seluruh 10 test suite (40 assertions) passed dengan sukses!
+Project telah bersih dan siap di-*deploy* ke *production* untuk keperluan Sidang Skripsi.

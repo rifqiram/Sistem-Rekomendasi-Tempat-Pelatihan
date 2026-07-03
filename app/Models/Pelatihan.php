@@ -11,11 +11,17 @@ class Pelatihan extends Model
     protected $fillable = [
         'judul',
         'deskripsi',
+        'interest_category',
+        'method',
+        'location',
+        'required_skill',
+        'priority',
+        'popularity',
         'kategori',
         'level',
         'durasi',
         'sertifikat',
-        'mentor_id',
+        'training_center_id',
         'tanggal_mulai',
         'tanggal_selesai',
         'is_active',
@@ -28,26 +34,13 @@ class Pelatihan extends Model
         'tanggal_selesai' => 'date',
     ];
 
-    public function mentor()
+    public function recommendations()
     {
-        return $this->belongsTo(Mentor::class, 'mentor_id');
+        return $this->hasMany(Recommendation::class, 'training_id');
     }
 
-    public function pendaftarans()
+    public function trainingCenter()
     {
-        return $this->hasMany(Pendaftaran::class, 'pelatihan_id');
-    }
-
-    public function pesertas()
-    {
-        return $this->belongsToMany(Peserta::class, 'tabel_pendaftaran', 'pelatihan_id', 'peserta_id')
-            ->withTimestamps()
-            ->withPivot(['status', 'tanggal_daftar']);
-    }
-
-    public function keahlians()
-    {
-        return $this->belongsToMany(Keahlian::class, 'tabel_pelatihan_keahlian', 'pelatihan_id', 'keahlian_id')
-            ->withTimestamps();
+        return $this->belongsTo(TrainingCenter::class, 'training_center_id');
     }
 }

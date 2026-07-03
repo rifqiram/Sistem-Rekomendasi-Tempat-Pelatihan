@@ -1,14 +1,14 @@
-@extends('admin.Layout.layout')
+@extends('layouts.auth')
+
+@section('title', 'Login Admin | SRTP')
 
 @section('content')
 <style>
-    body { background: var(--color-bg); }
     .admin-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--color-bg);
     }
     .login-container {
         width: 100%;
@@ -24,86 +24,86 @@
     }
     .login-brand .logo-box {
         width: 36px; height: 36px;
-        background: var(--color-primary);
+        background: #4f46e5;
         border-radius: 10px;
         display: flex; align-items: center; justify-content: center;
         color: #fff; font-size: 16px;
     }
     .login-brand .logo-name {
         font-size: 20px; font-weight: 700;
-        color: var(--color-text); letter-spacing: -0.3px;
+        color: #111827; letter-spacing: -0.3px;
     }
     .login-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
         padding: 32px;
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
     .login-card h2 {
         font-size: 20px; font-weight: 700;
-        color: var(--color-text); margin: 0 0 4px;
+        color: #111827; margin: 0 0 4px;
         text-align: center;
     }
     .login-card .subtitle {
-        font-size: 13.5px; color: var(--color-text-secondary);
+        font-size: 13.5px; color: #6b7280;
         text-align: center; margin: 0 0 24px;
     }
     .login-divider {
-        height: 1px; background: var(--color-border);
+        height: 1px; background: #e5e7eb;
         margin: 20px 0;
     }
     .login-submit-btn {
         width: 100%;
         padding: 10px;
-        background: var(--color-primary);
+        background: #4f46e5;
         color: #fff; border: none;
-        border-radius: var(--radius-sm);
+        border-radius: 6px;
         font-size: 14px; font-weight: 600;
         cursor: pointer; font-family: inherit;
         transition: background 0.15s ease, transform 0.15s ease;
         display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .login-submit-btn:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+    .login-submit-btn:hover { background: #4338ca; transform: translateY(-1px); }
     .login-submit-btn:active { transform: none; }
     .login-hint {
         margin-top: 20px;
         padding: 12px;
-        background: var(--color-bg);
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--color-border);
+        background: #f9fafb;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
         font-size: 12px;
-        color: var(--color-text-secondary);
+        color: #6b7280;
         text-align: center;
         line-height: 1.6;
     }
     .login-hint code {
         background: #fff;
-        border: 1px solid var(--color-border);
+        border: 1px solid #e5e7eb;
         padding: 1px 6px;
         border-radius: 4px;
         font-size: 11.5px;
-        color: var(--color-primary);
+        color: #4f46e5;
         font-weight: 500;
     }
     .input-with-icon { position: relative; }
     .input-with-icon .form-control { padding-right: 38px; }
     .input-with-icon .field-icon {
         position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-        color: var(--color-text-muted); font-size: 13px; pointer-events: none;
+        color: #9ca3af; font-size: 13px; pointer-events: none;
     }
     .form-label-row {
         display: flex; align-items: center; justify-content: space-between;
         margin-bottom: 5px;
     }
-    .form-label-row label { font-size: 12.5px; font-weight: 500; color: var(--color-text-secondary); }
+    .form-label-row label { font-size: 12.5px; font-weight: 500; color: #6b7280; }
 </style>
 
 <div class="login-container">
     {{-- Brand --}}
     <div class="login-brand">
         <div class="logo-box"><i class="fas fa-bolt"></i></div>
-        <span class="logo-name">PelatihanIT</span>
+        <span class="logo-name">SRTP Admin</span>
     </div>
 
     {{-- Card --}}

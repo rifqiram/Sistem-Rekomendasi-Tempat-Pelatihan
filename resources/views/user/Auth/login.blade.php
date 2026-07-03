@@ -1,30 +1,33 @@
-@extends('admin.Layout.layout')
+@extends('layouts.auth')
+
+@section('title', 'Login User | SRTP')
 
 @section('content')
 <style>
-    body { background: var(--color-bg); }
     .auth-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--color-bg);
     }
     .auth-card {
         width: 100%;
         max-width: 420px;
         padding: 28px;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-md);
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
     .auth-card h2 {
         margin-bottom: 6px;
+        font-weight: 700;
+        color: #111827;
     }
     .auth-card .subtitle {
         margin-bottom: 24px;
-        color: var(--color-text-secondary);
+        color: #6b7280;
+        font-size: 14px;
     }
     .auth-card .form-group { margin-bottom: 16px; }
     .auth-card .form-control { width: 100%; padding: 12px 14px; }
@@ -32,15 +35,16 @@
         width: 100%;
         padding: 12px;
         border: none;
-        border-radius: var(--radius-sm);
-        background: var(--color-primary);
+        border-radius: 6px;
+        background: #4f46e5;
         color: #fff;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s ease;
     }
-    .auth-submit-btn:hover { background: var(--color-primary-hover); }
-    .auth-link { display: block; margin-top: 18px; text-align: center; color: var(--color-primary); }
+    .auth-submit-btn:hover { background: #4338ca; }
+    .auth-link { display: block; margin-top: 18px; text-align: center; color: #4f46e5; text-decoration: none; font-weight: 500;}
+    .auth-link:hover { text-decoration: underline; }
 </style>
 
 <div class="auth-wrapper">

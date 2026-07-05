@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PelatihanResource;
-use App\Http\Resources\PendaftaranResource;
 use App\Models\Pelatihan;
-use App\Models\Pendaftaran;
 use App\Models\TrainingCenter;
 use Illuminate\Http\Request;
 
@@ -14,7 +12,7 @@ class PelatihanController extends Controller
     public function index()
     {
         return $this->successResponse(
-            PelatihanResource::collection(Pelatihan::with(['trainingCenter', 'keahlians.kategori'])->get()),
+            PelatihanResource::collection(Pelatihan::with(['trainingCenter'])->get()),
             'Data pelatihan berhasil diambil'
         );
     }
@@ -26,7 +24,7 @@ class PelatihanController extends Controller
         }
 
         if (TrainingCenter::count() === 0) {
-            return $this->errorResponse('Silakan tambahkan Tempat Pelatihan terlebih dahulu.', [], 400);
+            return $this->errorResponse('Silakan tambahkan Tempat Pelatihan terlebih dahulu.', 400);
         }
 
         $data = $request->validate([
@@ -45,24 +43,18 @@ class PelatihanController extends Controller
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'status' => 'nullable|string',
             'is_active' => 'boolean',
-            'keahlian_ids' => 'nullable|array',
-            'keahlian_ids.*' => 'exists:tabel_keahlian,id',
         ]);
-
-        $keahlianIds = $data['keahlian_ids'] ?? [];
-        unset($data['keahlian_ids']);
 
         $data['is_active'] = $data['is_active'] ?? true;
         $pelatihan = Pelatihan::create($data);
-        $pelatihan->keahlians()->sync($keahlianIds);
 
-        return $this->successResponse(new PelatihanResource($pelatihan->load(['trainingCenter', 'keahlians.kategori'])), 'Pelatihan berhasil dibuat', 201);
+        return $this->successResponse(new PelatihanResource($pelatihan->load(['trainingCenter'])), 'Pelatihan berhasil dibuat', 201);
     }
 
     public function show(Pelatihan $pelatihan)
     {
         return $this->successResponse(
-            new PelatihanResource($pelatihan->load(['trainingCenter', 'keahlians.kategori', 'pendaftarans.peserta'])),
+            new PelatihanResource($pelatihan->load(['trainingCenter'])),
             'Detail pelatihan berhasil diambil'
         );
     }
@@ -89,20 +81,11 @@ class PelatihanController extends Controller
             'tanggal_selesai' => 'sometimes|required|date|after_or_equal:tanggal_mulai',
             'status' => 'nullable|string',
             'is_active' => 'boolean',
-            'keahlian_ids' => 'nullable|array',
-            'keahlian_ids.*' => 'exists:tabel_keahlian,id',
         ]);
-
-        $keahlianIds = $data['keahlian_ids'] ?? null;
-        unset($data['keahlian_ids']);
 
         $pelatihan->update($data);
 
-        if ($keahlianIds !== null) {
-            $pelatihan->keahlians()->sync($keahlianIds);
-        }
-
-        return $this->successResponse(new PelatihanResource($pelatihan->load(['trainingCenter', 'keahlians.kategori'])), 'Pelatihan berhasil diperbarui');
+        return $this->successResponse(new PelatihanResource($pelatihan->load(['trainingCenter'])), 'Pelatihan berhasil diperbarui');
     }
 
     public function destroy(Request $request, Pelatihan $pelatihan)
@@ -111,36 +94,13 @@ class PelatihanController extends Controller
             return $response;
         }
 
-        if ($pelatihan->pendaftarans()->exists()) {
+        // Use modern enrollments table check
+        if ($pelatihan->enrollments()->exists()) {
             return $this->errorResponse('Masih ada peserta terdaftar', 400);
         }
 
         $pelatihan->delete();
 
         return $this->successResponse(null, 'Pelatihan berhasil dihapus');
-    }
-
-    public function pendaftaran(Request $request, Pelatihan $pelatihan)
-    {
-        $data = $request->validate([
-            'peserta_id' => 'required|exists:tabel_peserta,id',
-        ]);
-
-        $exists = Pendaftaran::where('pelatihan_id', $pelatihan->id)
-            ->where('peserta_id', $data['peserta_id'])
-            ->exists();
-
-        if ($exists) {
-            return $this->errorResponse('Peserta sudah terdaftar pada pelatihan ini', 409);
-        }
-
-        $pendaftaran = Pendaftaran::create([
-            'pelatihan_id' => $pelatihan->id,
-            'peserta_id' => $data['peserta_id'],
-            'tanggal_daftar' => now(),
-            'status' => 'terdaftar',
-        ]);
-
-        return $this->successResponse(new PendaftaranResource($pendaftaran->load('peserta', 'pelatihan.trainingCenter')), 'Pendaftaran berhasil dibuat', 201);
     }
 }

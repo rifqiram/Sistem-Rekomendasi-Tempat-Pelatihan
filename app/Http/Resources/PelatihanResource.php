@@ -24,7 +24,6 @@ class PelatihanResource extends JsonResource
             'popularity' => $this->popularity,
             'training_center_id' => $this->training_center_id,
             'training_center' => $this->whenLoaded('trainingCenter'),
-            'keahlian' => KeahlianResource::collection($this->whenLoaded('keahlians')),
             'tanggal_mulai' => $this->tanggal_mulai?->toDateString(),
             'tanggal_selesai' => $this->tanggal_selesai?->toDateString(),
             'is_active' => (bool) $this->is_active,

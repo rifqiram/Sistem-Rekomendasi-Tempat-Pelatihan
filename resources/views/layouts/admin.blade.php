@@ -11,7 +11,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Theme style (AdminLTE v4) -->
     <link rel="stylesheet" href="{{ asset('adminlte/css/adminlte.min.css') }}">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
 
+    <style>
+        /* SRTP Admin Custom Theme Override */
+        :root {
+            --bs-primary: #4f46e5;
+            --bs-primary-rgb: 79, 70, 229;
+            --bs-link-color: #4f46e5;
+            --bs-link-hover-color: #3730a3;
+        }
+
+        .app-sidebar[data-bs-theme="dark"] {
+            background-color: #1e293b !important; /* Darker Slate for enterprise look */
+        }
+
+        .sidebar-brand {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .nav-link.active {
+            background-color: rgba(79, 70, 229, 0.9) !important;
+            color: #ffffff !important;
+        }
+
+        .text-bg-primary {
+            background-color: var(--bs-primary) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+            border-color: #4338ca;
+        }
+
+        /* Global SweetAlert Modernization */
+        .swal2-popup {
+            border-radius: 1rem !important;
+            padding: 1.5rem !important;
+        }
+        .swal2-title {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+        .swal2-html-container {
+            color: #64748b !important;
+            font-size: 0.95rem !important;
+        }
+        .swal2-confirm {
+            border-radius: 0.5rem !important;
+            font-weight: 600 !important;
+            padding: 0.6rem 1.5rem !important;
+            background-color: var(--bs-primary) !important;
+        }
+        .swal2-cancel {
+            border-radius: 0.5rem !important;
+            font-weight: 600 !important;
+            padding: 0.6rem 1.5rem !important;
+        }
+    </style>
     @stack('styles')
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -69,8 +133,8 @@
             <!--begin::Sidebar Brand-->
             <div class="sidebar-brand">
                 <a href="{{ route('admin.dashboard') }}" class="brand-link">
-                    <i class="fas fa-bolt brand-image opacity-75" style="margin-left: .8rem; margin-right: .5rem; font-size: 1.5rem; color: #ffc107;"></i>
-                    <span class="brand-text fw-light">Sistem Rekomendasi</span>
+                    <i class="fas fa-bolt brand-image opacity-75" style="margin-left: .8rem; margin-right: .5rem; font-size: 1.5rem; color: #38bdf8;"></i>
+                    <span class="brand-text fw-semibold">Admin SRTP</span>
                 </a>
             </div>
             <!--end::Sidebar Brand-->
@@ -170,8 +234,8 @@
 
         <!--begin::Footer-->
         <footer class="app-footer">
-            <div class="float-end d-none d-sm-inline">SRTP V2</div>
-            <strong>Copyright &copy; 2026 <a href="#" class="text-decoration-none">AdminLTE.io</a>.</strong> All rights reserved.
+            <div class="float-end d-none d-sm-inline fw-semibold text-muted">Versi 2.0</div>
+            <strong>Copyright &copy; 2026 <a href="#" class="text-decoration-none" style="color: var(--bs-primary);">Sistem Rekomendasi Tempat Pelatihan</a>.</strong> All rights reserved.
         </footer>
         <!--end::Footer-->
     </div>
@@ -180,12 +244,69 @@
     <!-- Global API JS -->
     <script src="{{ asset('js/api.js') }}"></script>
 
-    <!-- AdminLTE JS (Bootstrap 5 bundle included usually, or we add BS5 explicitly if needed by v4) -->
+    <!-- AdminLTE JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Note: We are mocking the adminlte js here if the file is missing, but assuming it exists -->
-    <script src="{{ asset('adminlte/js/adminlte.js') }}" onerror="console.warn('adminlte.js not found, layout might degrade slightly')"></script>
+    <script src="{{ asset('adminlte/js/adminlte.js') }}" onerror="console.warn('adminlte.js not found')"></script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 
     <script>
+        // Global SweetAlert Helpers
+        window.showAlert = function(type, title, message) {
+            Swal.fire({
+                icon: type,
+                title: title,
+                text: message,
+                confirmButtonText: 'Mengerti',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary swal2-confirm'
+                }
+            });
+        };
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        window.showToast = function(type, title) {
+            Toast.fire({
+                icon: type,
+                title: title
+            });
+        };
+
+        window.confirmAction = function(title, text, confirmText, callback) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: confirmText || 'Ya, Lanjutkan',
+                cancelButtonText: 'Batal',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger swal2-confirm me-2',
+                    cancelButton: 'btn btn-secondary swal2-cancel'
+                }
+            }).then((result) => {
+                if (result.isConfirmed && typeof callback === 'function') {
+                    callback();
+                }
+            });
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const user = window.getApiUser();
 

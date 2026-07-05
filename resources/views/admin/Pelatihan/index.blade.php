@@ -7,21 +7,97 @@
     <li class="breadcrumb-item active">Pelatihan</li>
 @endsection
 
+@push('styles')
+<style>
+    /* Admin Table Modernization */
+    .card-modern {
+        border: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-radius: 0.75rem;
+    }
+
+    .card-modern .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding: 1.25rem 1.5rem;
+    }
+
+    .table-modern thead th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem 1.5rem;
+    }
+
+    .table-modern tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Minimalist Action Buttons */
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .btn-icon.edit { color: #3b82f6; background-color: rgba(59, 130, 246, 0.1); border: none; }
+    .btn-icon.edit:hover { background-color: #3b82f6; color: white; }
+
+    .btn-icon.delete { color: #ef4444; background-color: rgba(239, 68, 68, 0.1); border: none; }
+    .btn-icon.delete:hover { background-color: #ef4444; color: white; }
+
+    /* Form Modernization */
+    .modal-content {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.4rem;
+    }
+
+    .form-control, .form-select {
+        border-color: #cbd5e1;
+        padding: 0.6rem 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h3 class="card-title">Daftar Pelatihan Teknis</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="showModal('create')">
-                        <i class="fas fa-plus me-1"></i> Tambah Pelatihan
-                    </button>
-                </div>
+        <div class="card card-modern mb-4">
+            <div class="card-header d-flex w-100 justify-content-between align-items-center">
+                <h3 class="card-title fw-bold m-0 text-dark"><i class="fas fa-book-open text-muted me-2"></i> Daftar Pelatihan Teknis</h3>
+                <button type="button" class="btn btn-primary btn-sm px-3 fw-semibold rounded-pill shadow-sm" onclick="showModal('create')">
+                    <i class="fas fa-plus me-1"></i> Tambah Pelatihan
+                </button>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0">
+                    <table class="table table-hover table-modern mb-0">
                         <thead>
                             <tr>
                                 <th style="width: 50px;">No</th>
@@ -35,9 +111,9 @@
                         </thead>
                         <tbody id="pelatihan-table-body">
                             <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    <div class="spinner-border text-primary" role="status"></div>
-                                    <div class="mt-2">Memuat data...</div>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                                    <div class="small">Memuat data pelatihan...</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -50,119 +126,110 @@
 
 <!-- Modal CRUD -->
 <div class="modal fade" id="pelatihanModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="pelatihanModalLabel">Tambah Pelatihan</h5>
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold" id="pelatihanModalLabel">Tambah Pelatihan Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="pelatihanForm">
-                <div class="modal-body">
-                    <div id="pelatihanAlert" class="alert alert-danger d-none"></div>
+                <div class="modal-body p-4">
                     <input type="hidden" id="pelatihan_id">
 
-                    <div class="row">
-                        <div class="col-md-8 mb-3">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
                             <label class="form-label">Judul Pelatihan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="judul" required>
+                            <input type="text" class="form-control bg-light" id="judul" required placeholder="Contoh: Bootcamp Fullstack Web Developer">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Training Center <span class="text-danger">*</span></label>
+                        <div class="col-md-4">
+                            <label class="form-label">Lembaga / Training Center <span class="text-danger">*</span></label>
                             <select class="form-select" id="training_center_id" required>
-                                <option value="">Pilih Lembaga...</option>
+                                <option value="" disabled selected>Pilih Lembaga penyelenggara...</option>
                                 <!-- Loaded via JS -->
                             </select>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea class="form-control" id="deskripsi" rows="3"></textarea>
+                    <div class="mb-4">
+                        <label class="form-label">Deskripsi Singkat</label>
+                        <textarea class="form-control" id="deskripsi" rows="2" placeholder="Tuliskan silabus atau penjelasan singkat pelatihan..."></textarea>
                     </div>
 
-                    <h6 class="mt-4 mb-3 fw-bold border-bottom pb-2 text-primary">Atribut Recommendation Engine</h6>
-                    <div class="row bg-light p-3 rounded mb-3">
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Bidang (Kategori)</label>
-                            <select class="form-select" id="interest_category">
-                                <option value="">Pilih...</option>
-                                <option value="IT">IT & Teknologi</option>
-                                <option value="Bisnis">Bisnis & Manajemen</option>
-                                <option value="Desain">Desain & Kreatif</option>
-                                <option value="Bahasa">Bahasa</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
+                    <!-- Recommendation Engine Attributes -->
+                    <div class="p-3 mb-4 rounded-3 border border-primary border-opacity-25" style="background-color: rgba(79, 70, 229, 0.05);">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-magic text-primary me-2"></i>
+                            <strong class="text-primary small text-uppercase letter-spacing-1">Atribut Recommendation Engine</strong>
                         </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Metode</label>
-                            <select class="form-select" id="method">
-                                <option value="Online">Online</option>
-                                <option value="Offline">Offline</option>
-                                <option value="Hybrid">Hybrid</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Syarat Skill (Min)</label>
-                            <select class="form-select" id="required_skill">
-                                <option value="Beginner">Beginner (Pemula)</option>
-                                <option value="Intermediate">Intermediate (Menengah)</option>
-                                <option value="Advanced">Advanced (Mahir)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Popularitas Skor (0-100)</label>
-                            <input type="number" class="form-control" id="popularity" value="0" min="0" max="100">
+                        <p class="text-muted small mb-3 lh-sm">Data di bawah ini menjadi variabel utama penentu skor kecocokan pelatihan ini dengan preferensi pencari kerja.</p>
+
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Kategori Bidang</label>
+                                <select class="form-select form-select-sm" id="interest_category">
+                                    <option value="">Tidak Ditentukan</option>
+                                    <option value="IT">IT & Teknologi</option>
+                                    <option value="Bisnis">Bisnis & Manajemen</option>
+                                    <option value="Desain">Desain & Kreatif</option>
+                                    <option value="Bahasa">Bahasa Asing</option>
+                                    <option value="Lainnya">Lainnya Umum</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Metode</label>
+                                <select class="form-select form-select-sm" id="method">
+                                    <option value="Online">Daring (Online)</option>
+                                    <option value="Offline">Tatap Muka (Offline)</option>
+                                    <option value="Hybrid">Campuran (Hybrid)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Syarat Skill Minimum</label>
+                                <select class="form-select form-select-sm" id="required_skill">
+                                    <option value="Beginner">Pemula (Beginner)</option>
+                                    <option value="Intermediate">Menengah (Intermediate)</option>
+                                    <option value="Advanced">Mahir (Advanced)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Skor Popularitas</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" id="popularity" value="0" min="0" max="100">
+                                    <span class="input-group-text bg-white text-muted">/ 100</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <h6 class="mt-4 mb-3 fw-bold border-bottom pb-2">Informasi Tambahan</h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
+                    <h6 class="fw-bold mb-3 mt-4 text-dark" style="font-size: 0.9rem;">Informasi Tambahan Pelaksanaan</h6>
+                    <div class="row g-3">
+                        <div class="col-md-3">
                             <label class="form-label">Tanggal Mulai <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_mulai" required>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-3">
                             <label class="form-label">Tanggal Selesai <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_selesai" required>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Sertifikat</label>
-                            <input type="text" class="form-control" id="sertifikat" placeholder="Ya / Tidak">
+                        <div class="col-md-3">
+                            <label class="form-label">Sertifikat Kelulusan</label>
+                            <input type="text" class="form-control" id="sertifikat" placeholder="Cth: BNSP / Lembaga">
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Status Tayang</label>
-                            <select class="form-select" id="is_active">
-                                <option value="1">Aktif (Tampil)</option>
+                        <div class="col-md-3">
+                            <label class="form-label">Status Visibilitas</label>
+                            <select class="form-select bg-light" id="is_active">
+                                <option value="1">Aktif (Tampil Publik)</option>
                                 <option value="0">Draft (Sembunyikan)</option>
                             </select>
                         </div>
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="btnSave">Simpan Data</button>
+                <div class="modal-footer border-top-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Batalkan</button>
+                    <button type="submit" class="btn btn-primary fw-bold px-4" id="btnSave">Simpan Pelatihan</button>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Delete -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Apakah Anda yakin ingin menghapus pelatihan <strong id="deleteName"></strong>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmDelete">Ya, Hapus</button>
-            </div>
         </div>
     </div>
 </div>
@@ -171,21 +238,19 @@
 @push('scripts')
 <script>
     let pelatihanModal;
-    let deleteModal;
-    let currentDeleteId = null;
     let trainingCentersList = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
         pelatihanModal = new bootstrap.Modal(document.getElementById('pelatihanModal'));
-        deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-
         await fetchTrainingCenters();
         loadData();
     });
 
     async function fetchTrainingCenters() {
         try {
-            trainingCentersList = await window.authFetch(`${window.apiBase}/training-centers`).then(window.parseApi);
+            const rawRes = await window.authFetch(`${window.apiBase}/training-centers`).then(window.parseApi);
+            trainingCentersList = Array.isArray(rawRes) ? rawRes : (rawRes.data || []);
+
             const selectTc = document.getElementById('training_center_id');
             trainingCentersList.forEach(tc => {
                 const opt = document.createElement('option');
@@ -201,55 +266,69 @@
     async function loadData() {
         const tbody = document.getElementById('pelatihan-table-body');
         try {
-            const data = await window.authFetch(`${window.apiBase}/pelatihan`).then(window.parseApi);
+            const rawRes = await window.authFetch(`${window.apiBase}/pelatihan`).then(window.parseApi);
+            const dataArray = Array.isArray(rawRes) ? rawRes : (rawRes.data || []);
+
             tbody.innerHTML = '';
 
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">Belum ada data Pelatihan</td></tr>`;
+            if (dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-folder-open fs-2 mb-3 opacity-25 d-block"></i>Belum ada data Pelatihan</td></tr>`;
                 return;
             }
 
-            data.forEach((item, index) => {
+            dataArray.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                const badgeActive = item.is_active ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Draft</span>';
 
-                let tcName = '<i class="text-danger">TC Tidak Ditemukan</i>';
-                // Pada resource V1 lama mungkin blm eager load training center, kita cari dari list lokal
+                // Modern Badge for Status
+                const badgeActive = item.is_active
+                    ? '<span class="badge rounded-pill" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);"><i class="fas fa-circle me-1" style="font-size:8px;"></i> Aktif Publik</span>'
+                    : '<span class="badge rounded-pill" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100,116,139,0.2);"><i class="fas fa-circle me-1" style="font-size:8px;"></i> Draft</span>';
+
+                // Skill Badge
+                let skillBadgeStyle = '';
+                if(item.required_skill === 'Advanced') skillBadgeStyle = 'bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25';
+                else if(item.required_skill === 'Intermediate') skillBadgeStyle = 'bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25';
+                else skillBadgeStyle = 'bg-success bg-opacity-10 text-success border border-success border-opacity-25';
+
+                let tcName = '<i class="text-danger small"><i class="fas fa-exclamation-triangle"></i> TC Terhapus</i>';
                 const tcMatch = trainingCentersList.find(tc => tc.id == item.training_center_id);
                 if (tcMatch) tcName = tcMatch.nama;
-                // Jika dari resource sudah bawa (item.training_center.nama) gunakan itu
                 if (item.training_center) tcName = item.training_center.nama;
 
                 tr.innerHTML = `
-                    <td class="align-middle">${index + 1}</td>
-                    <td class="align-middle fw-semibold">${item.judul}</td>
-                    <td class="align-middle">${tcName}</td>
-                    <td class="align-middle">${item.interest_category || '-'} <br><small class="text-muted">${item.method || '-'}</small></td>
-                    <td class="align-middle">${item.required_skill || '-'}</td>
-                    <td class="align-middle">${badgeActive}</td>
-                    <td class="align-middle text-center">
-                        <button class="btn btn-sm btn-info text-white" onclick='editData(${JSON.stringify(item).replace(/'/g, "\\'")})' title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="confirmDelete(${item.id}, '${item.judul}')" title="Hapus">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <td class="text-muted">${index + 1}</td>
+                    <td class="fw-bold text-dark">${item.judul}</td>
+                    <td><i class="fas fa-building text-muted small me-1"></i> ${tcName}</td>
+                    <td>
+                        <div class="fw-medium text-dark">${item.interest_category || '-'}</div>
+                        <div class="text-muted small"><i class="fas fa-chalkboard-teacher opacity-50 me-1"></i> ${item.method || '-'}</div>
+                    </td>
+                    <td><span class="badge rounded-pill ${skillBadgeStyle}">${item.required_skill || '-'}</span></td>
+                    <td>${badgeActive}</td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn-icon edit" onclick='editData(${JSON.stringify(item).replace(/'/g, "\\'")})' title="Edit Pelatihan">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button class="btn-icon delete" onclick="confirmDelete(${item.id}, '${item.judul}')" title="Hapus Pelatihan">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         } catch (error) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">Gagal memuat data: ${error}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle me-1"></i> Gagal memuat data</td></tr>`;
+            console.error("Load data error: ", error);
         }
     }
 
     function showModal(mode) {
-        const alertBox = document.getElementById('pelatihanAlert');
-        alertBox.classList.add('d-none');
         document.getElementById('pelatihanForm').reset();
 
         if (mode === 'create') {
-            document.getElementById('pelatihanModalLabel').textContent = 'Tambah Pelatihan';
+            document.getElementById('pelatihanModalLabel').textContent = 'Tambah Pelatihan Baru';
             document.getElementById('pelatihan_id').value = '';
             document.getElementById('is_active').value = '1';
         }
@@ -258,7 +337,7 @@
 
     function editData(item) {
         showModal('edit');
-        document.getElementById('pelatihanModalLabel').textContent = 'Edit Pelatihan';
+        document.getElementById('pelatihanModalLabel').textContent = 'Edit Data Pelatihan';
 
         document.getElementById('pelatihan_id').value = item.id;
         document.getElementById('judul').value = item.judul;
@@ -279,7 +358,6 @@
 
         const id = document.getElementById('pelatihan_id').value;
         const btnSave = document.getElementById('btnSave');
-        const alertBox = document.getElementById('pelatihanAlert');
 
         const payload = {
             judul: document.getElementById('judul').value,
@@ -299,9 +377,9 @@
         const methodHttp = id ? 'PUT' : 'POST';
 
         try {
+            const originalText = btnSave.innerHTML;
             btnSave.disabled = true;
-            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-            alertBox.classList.add('d-none');
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Menyimpan...';
 
             const response = await window.authFetch(url, {
                 method: methodHttp,
@@ -319,48 +397,39 @@
             }
 
             pelatihanModal.hide();
+            window.showToast('success', 'Data pelatihan berhasil disimpan!');
             loadData();
+            btnSave.innerHTML = originalText;
         } catch (error) {
-            alertBox.textContent = error.message;
-            alertBox.classList.remove('d-none');
-        } finally {
+            window.showAlert('error', 'Gagal!', error.message);
             btnSave.disabled = false;
-            btnSave.textContent = 'Simpan Data';
+            btnSave.innerHTML = 'Simpan Pelatihan';
         }
     });
 
     function confirmDelete(id, judul) {
-        currentDeleteId = id;
-        document.getElementById('deleteName').textContent = judul;
-        deleteModal.show();
-    }
+        window.confirmAction(
+            'Hapus Pelatihan?',
+            `Apakah Anda yakin ingin menghapus pelatihan "${judul}" secara permanen?`,
+            'Ya, Hapus',
+            async () => {
+                try {
+                    const response = await window.authFetch(`${window.apiBase}/pelatihan/${id}`, {
+                        method: 'DELETE'
+                    });
 
-    document.getElementById('btnConfirmDelete').addEventListener('click', async function() {
-        if (!currentDeleteId) return;
+                    if (!response.ok) {
+                        const resData = await response.json();
+                        throw new Error(resData.message || 'Gagal menghapus');
+                    }
 
-        const btn = this;
-        try {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
-
-            const response = await window.authFetch(`${window.apiBase}/pelatihan/${currentDeleteId}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) {
-                const resData = await response.json();
-                throw new Error(resData.message || 'Gagal menghapus');
+                    window.showToast('success', 'Pelatihan berhasil dihapus');
+                    loadData();
+                } catch (error) {
+                    window.showAlert('error', 'Gagal', error.message);
+                }
             }
-
-            deleteModal.hide();
-            loadData();
-        } catch (error) {
-            alert('Error: ' + error.message);
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Ya, Hapus';
-            currentDeleteId = null;
-        }
-    });
+        );
+    }
 </script>
 @endpush

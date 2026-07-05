@@ -9,99 +9,170 @@
     #map {
         height: 350px;
         width: 100%;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
         z-index: 1; /* prevent dropdown overlap issues */
     }
-    .profile-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        padding: 24px;
+
+    .form-control, .form-select {
+        border-color: var(--border-color);
+        padding: 0.6rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .section-title {
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-bottom: 0.4rem;
+    }
+
+    .section-container {
+        background-color: var(--bg-color);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .section-title-modern {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #111827;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #e5e7eb;
+        color: var(--primary-color);
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-location {
+        background-color: white;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        font-weight: 600;
+        border-radius: 50rem;
+        padding: 0.5rem 1.25rem;
+        transition: all 0.2s;
+    }
+
+    .btn-location:hover {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-sm);
     }
 </style>
 @endpush
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <h3 class="fw-bold mb-4">Profil Saya</h3>
+    <div class="col-lg-9">
+        <div class="d-flex align-items-center mb-4 gap-3">
+            <div class="bg-indigo-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.25rem; background-color: rgba(79, 70, 229, 0.1);">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <div>
+                <h3 class="fw-bold mb-0" style="color: var(--text-main);">Profil Saya</h3>
+                <p class="text-muted mb-0 small">Lengkapi data diri dan lokasi Anda untuk mendapatkan rekomendasi akurat.</p>
+            </div>
+        </div>
 
-        <div id="alertBox" class="alert d-none mb-4"></div>
+        <div class="card border-0 shadow-sm rounded-4" style="background: var(--surface-color);">
+            <div class="card-body p-4 p-md-5">
+                <form id="profileForm">
 
-        <div class="profile-card">
-            <form id="profileForm">
-                <div class="section-title">Data Demografi</div>
-                <div class="row mb-4">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Usia <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="age" min="15" max="100" required>
+                    {{-- DEMOGRAFI SECTION --}}
+                    <div class="section-container">
+                        <div class="section-title-modern">
+                            <i class="fas fa-id-card"></i> Data Demografi
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Usia <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="age" min="15" max="100" required placeholder="Contoh: 24">
+                                    <span class="input-group-text bg-white text-muted border-start-0">Tahun</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="phone" placeholder="08xxxxxxxx" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Pendidikan Terakhir</label>
+                                <select class="form-select" id="education">
+                                    <option value="">Pilih Pendidikan...</option>
+                                    <option value="SMA/SMK">SMA / SMK / Sederajat</option>
+                                    <option value="D3">D3 (Diploma)</option>
+                                    <option value="S1">S1 (Sarjana)</option>
+                                    <option value="S2">S2 (Magister)</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kecamatan / Distrik</label>
+                                <input type="text" class="form-control" id="district" placeholder="Cth: Magetan">
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Nomor Telepon <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="phone" placeholder="08xxxxxxxx" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Pendidikan Terakhir</label>
-                        <select class="form-select" id="education">
-                            <option value="">Pilih Pendidikan...</option>
-                            <option value="SMA/SMK">SMA / SMK / Sederajat</option>
-                            <option value="D3">D3 (Diploma)</option>
-                            <option value="S1">S1 (Sarjana)</option>
-                            <option value="S2">S2 (Magister)</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Kecamatan / Distrik</label>
-                        <input type="text" class="form-control" id="district" placeholder="Cth: Magetan">
-                    </div>
-                </div>
 
-                <div class="section-title">Informasi Geografis (Lokasi)</div>
-                <p class="text-muted small mb-3">
-                    <i class="fas fa-info-circle text-primary"></i>
-                    Lokasi Anda akan digunakan oleh sistem untuk menghitung jarak ke tempat pelatihan terdekat. Silakan geser pin pada peta di bawah ini.
-                </p>
+                    {{-- LOKASI SECTION --}}
+                    <div class="section-container">
+                        <div class="section-title-modern">
+                            <i class="fas fa-map-marked-alt"></i> Informasi Geografis (Lokasi)
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Alamat Lengkap</label>
-                    <textarea class="form-control" id="alamat_lengkap" rows="2" placeholder="Cth: Jl. Raya Madiun-Magetan No 12..."></textarea>
-                </div>
+                        <div class="alert bg-blue-subtle border-0 rounded-3 text-dark d-flex align-items-start gap-3 p-3 mb-4" style="background-color: rgba(59, 130, 246, 0.1);">
+                            <i class="fas fa-info-circle text-primary mt-1"></i>
+                            <div class="small lh-sm">
+                                Lokasi Anda digunakan oleh sistem untuk menghitung jarak ke tempat pelatihan terdekat. Silakan klik tombol <strong>Gunakan Lokasi Saat Ini</strong> atau geser pin merah pada peta di bawah ini secara manual.
+                            </div>
+                        </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Latitude</label>
-                        <input type="number" step="any" class="form-control bg-light" id="latitude" readonly required>
+                        <div class="mb-3">
+                            <label class="form-label">Alamat Lengkap</label>
+                            <textarea class="form-control" id="alamat_lengkap" rows="2" placeholder="Cth: Jl. Raya Madiun-Magetan No 12..."></textarea>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Latitude</label>
+                                <input type="number" step="any" class="form-control" style="background-color: #f1f5f9; color: var(--text-muted);" id="latitude" readonly required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Longitude</label>
+                                <input type="number" step="any" class="form-control" style="background-color: #f1f5f9; color: var(--text-muted);" id="longitude" readonly required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h6 class="fw-bold mb-0 text-dark">Peta Titik Lokasi</h6>
+                            <button type="button" class="btn-location" id="btnGetCurrentLocation">
+                                <i class="fas fa-location-arrow me-1"></i> Deteksi Lokasi Saya
+                            </button>
+                        </div>
+
+                        <div class="p-2 border rounded-3 bg-white shadow-sm mb-2">
+                            <div id="map"></div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Longitude</label>
-                        <input type="number" step="any" class="form-control bg-light" id="longitude" readonly required>
+
+                    <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                        <button type="submit" class="btn fw-bold px-4 py-2 rounded-pill shadow-sm" id="btnSave" style="background-color: var(--primary-color); color: white;">
+                            <i class="fas fa-save me-1"></i> Simpan Profil
+                        </button>
                     </div>
-                </div>
-
-                <div class="mb-4">
-                    <button type="button" class="btn btn-outline-primary btn-sm mb-2" id="btnGetCurrentLocation">
-                        <i class="fas fa-map-marker-alt"></i> Gunakan Lokasi Saat Ini
-                    </button>
-                    <div id="map"></div>
-                </div>
-
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-primary px-4 py-2" id="btnSave">
-                        Simpan Profil
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -154,7 +225,8 @@
     document.getElementById('btnGetCurrentLocation').addEventListener('click', () => {
         if (navigator.geolocation) {
             const btn = document.getElementById('btnGetCurrentLocation');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari...';
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Mencari...';
             btn.disabled = true;
 
             navigator.geolocation.getCurrentPosition(
@@ -162,18 +234,18 @@
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     updateMapMarker(lat, lng, true); // true = auto fill address
-                    btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Gunakan Lokasi Saat Ini';
+                    btn.innerHTML = originalHTML;
                     btn.disabled = false;
                 },
                 (error) => {
-                    alert('Gagal mendapatkan lokasi. Pastikan izin lokasi (GPS) di browser diaktifkan.');
-                    btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Gunakan Lokasi Saat Ini';
+                    window.showAlert('error', 'Akses Ditolak', 'Gagal mendapatkan lokasi. Pastikan izin lokasi (GPS) di browser diaktifkan.');
+                    btn.innerHTML = originalHTML;
                     btn.disabled = false;
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
         } else {
-            alert('Browser Anda tidak mendukung Geolocation.');
+            window.showAlert('error', 'Tidak Didukung', 'Browser Anda tidak mendukung fitur Geolocation.');
         }
     });
 
@@ -231,7 +303,6 @@
         e.preventDefault();
 
         const btnSave = document.getElementById('btnSave');
-        const alertBox = document.getElementById('alertBox');
 
         const payload = {
             age: document.getElementById('age').value,
@@ -244,9 +315,9 @@
         };
 
         try {
+            const originalHTML = btnSave.innerHTML;
             btnSave.disabled = true;
-            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-            alertBox.classList.add('d-none');
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Menyimpan...';
 
             const response = await window.authFetch(window.apiBase + '/profile', {
                 method: 'POST',
@@ -258,19 +329,32 @@
                 throw new Error(resData.message || 'Gagal menyimpan profil.');
             }
 
-            alertBox.className = 'alert alert-success mt-3';
-            alertBox.innerHTML = '<i class="fas fa-check-circle"></i> Profil berhasil disimpan! <a href="/user/questionnaire" class="alert-link">Lanjutkan ke Kuesioner <i class="fas fa-arrow-right"></i></a>';
-            alertBox.classList.remove('d-none');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            btnSave.innerHTML = originalHTML;
+            btnSave.disabled = false;
+
+            // Success with redirect option
+            Swal.fire({
+                icon: 'success',
+                title: 'Profil Tersimpan',
+                text: 'Data profil dan lokasi Anda berhasil diperbarui.',
+                showCancelButton: true,
+                confirmButtonText: 'Lanjut ke Kuesioner',
+                cancelButtonText: 'Tutup',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'swal2-confirm border-0 text-white me-2',
+                    cancelButton: 'swal2-cancel border-0 text-white'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/user/questionnaire';
+                }
+            });
 
         } catch (error) {
-            alertBox.className = 'alert alert-danger mt-3';
-            alertBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + error.message;
-            alertBox.classList.remove('d-none');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } finally {
+            window.showAlert('error', 'Gagal Disimpan', error.message);
+            btnSave.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Profil';
             btnSave.disabled = false;
-            btnSave.textContent = 'Simpan Profil';
         }
     });
 </script>

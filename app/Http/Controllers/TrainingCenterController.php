@@ -23,10 +23,7 @@ class TrainingCenterController extends Controller
      */
     public function store(StoreTrainingCenterRequest $request)
     {
-        if ($response = $this->authorizeAdmin($request)) {
-            return $response;
-        }
-
+        // Pengecekan authorization (role admin) sudah ditangani oleh FormRequest (StoreTrainingCenterRequest->authorize())
         $trainingCenter = TrainingCenter::create($request->validated());
         return $this->successResponse($trainingCenter, 'Training Center berhasil ditambahkan.', 201);
     }
@@ -46,10 +43,7 @@ class TrainingCenterController extends Controller
      */
     public function update(UpdateTrainingCenterRequest $request, $id)
     {
-        if ($response = $this->authorizeAdmin($request)) {
-            return $response;
-        }
-
+        // Pengecekan authorization sudah ditangani FormRequest
         $trainingCenter = TrainingCenter::findOrFail($id);
 
         $trainingCenter->update($request->validated());

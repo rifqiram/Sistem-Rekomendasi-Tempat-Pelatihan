@@ -23,4 +23,24 @@ class EnrollmentController extends Controller
 
         return $this->successResponse($enrollments, 'Data pendaftar berhasil diambil.');
     }
+
+    /**
+     * Update status pendaftaran
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
+        $data = $request->validate([
+            'status' => 'required|in:terdaftar,aktif,selesai,batal',
+        ]);
+
+        $enrollment = Enrollment::findOrFail($id);
+        $enrollment->status = $data['status'];
+        $enrollment->save();
+
+        return $this->successResponse($enrollment, 'Status pendaftaran berhasil diperbarui.');
+    }
 }

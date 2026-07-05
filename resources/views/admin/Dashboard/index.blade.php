@@ -7,97 +7,184 @@
     <li class="breadcrumb-item active">Dashboard</li>
 @endsection
 
+@push('styles')
+<style>
+    /* Modern Metric Cards for Admin Dashboard */
+    .metric-card {
+        background-color: #fff;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        text-decoration: none !important;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-color: rgba(0,0,0,0.1);
+    }
+
+    .metric-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        flex-shrink: 0;
+    }
+
+    .metric-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .metric-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .metric-link-indicator {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: #cbd5e1;
+        font-size: 1rem;
+        transition: color 0.3s, transform 0.3s;
+    }
+
+    .metric-card:hover .metric-link-indicator {
+        color: var(--bs-primary);
+        transform: translateX(3px) scale(1.1);
+    }
+
+    /* Table Enhancements */
+    .table-modern thead th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    .table-modern td {
+        vertical-align: middle;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        color: #334155;
+    }
+</style>
+@endpush
+
 @section('content')
-<!-- Small boxes (Stat box) -->
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-info">
-            <div class="inner">
-                <h3 id="stat-tc">0</h3>
-                <p>Training Center</p>
+<!-- Metric Cards Row -->
+<div class="row g-3 mb-4">
+    <!-- Training Center -->
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.training-centers.index') }}" class="metric-card">
+            <div class="metric-icon-wrapper" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                <i class="fas fa-building"></i>
             </div>
-            <div class="small-box-icon">
-                <i class="fas fa-building text-white opacity-50"></i>
+            <div class="metric-info">
+                <span class="metric-value" id="stat-tc">0</span>
+                <span class="metric-label">Training Center</span>
             </div>
-            <a href="{{ route('admin.training-centers.index') }}" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                Kelola Data <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
+            <i class="fas fa-chevron-right metric-link-indicator"></i>
+        </a>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-success">
-            <div class="inner">
-                <h3 id="stat-pelatihan">0</h3>
-                <p>Pelatihan Aktif</p>
+    <!-- Pelatihan Aktif -->
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.pelatihan.index') }}" class="metric-card">
+            <div class="metric-icon-wrapper" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981;">
+                <i class="fas fa-book-open"></i>
             </div>
-            <div class="small-box-icon">
-                <i class="fas fa-book text-white opacity-50"></i>
+            <div class="metric-info">
+                <span class="metric-value" id="stat-pelatihan">0</span>
+                <span class="metric-label">Pelatihan Aktif</span>
             </div>
-            <a href="{{ route('admin.pelatihan.index') }}" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                Kelola Data <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
+            <i class="fas fa-chevron-right metric-link-indicator"></i>
+        </a>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-warning">
-            <div class="inner">
-                <h3 id="stat-users">0</h3>
-                <p>Pencari Kerja (Users)</p>
+    <!-- Users -->
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.users.index') }}" class="metric-card">
+            <div class="metric-icon-wrapper" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                <i class="fas fa-users"></i>
             </div>
-            <div class="small-box-icon">
-                <i class="fas fa-users text-dark opacity-50"></i>
+            <div class="metric-info">
+                <span class="metric-value" id="stat-users">0</span>
+                <span class="metric-label">Pencari Kerja</span>
             </div>
-            <a href="{{ route('admin.users.index') }}" class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover">
-                Kelola Pengguna <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
+            <i class="fas fa-chevron-right metric-link-indicator"></i>
+        </a>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box text-bg-danger">
-            <div class="inner">
-                <h3 id="stat-enrollments">0</h3>
-                <p>Pendaftaran Masuk</p>
+    <!-- Enrollments -->
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.enrollments.index') }}" class="metric-card">
+            <div class="metric-icon-wrapper" style="background-color: rgba(79, 70, 229, 0.1); color: #4f46e5;">
+                <i class="fas fa-clipboard-check"></i>
             </div>
-            <div class="small-box-icon">
-                <i class="fas fa-clipboard-list text-white opacity-50"></i>
+            <div class="metric-info">
+                <span class="metric-value" id="stat-enrollments">0</span>
+                <span class="metric-label">Pendaftaran</span>
             </div>
-            <a href="{{ route('admin.enrollments.index') }}" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                Lihat Riwayat <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
+            <i class="fas fa-chevron-right metric-link-indicator"></i>
+        </a>
     </div>
 </div>
 
-<div class="row mt-3">
+<div class="row">
     <!-- Pendaftar Terbaru -->
     <div class="col-12">
-        <div class="card">
-            <div class="card-header border-0">
-                <h3 class="card-title fw-bold">Pendaftar Terbaru</h3>
-                <div class="card-tools">
-                    <a href="{{ route('admin.enrollments.index') }}" class="btn btn-tool btn-sm">
-                        <i class="fas fa-bars"></i> Lihat Semua
-                    </a>
-                </div>
+        <div class="card border-0 shadow-sm" style="border-radius: 0.75rem;">
+            <div class="card-header bg-white border-0 py-3 d-flex w-100 justify-content-between align-items-center" style="border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem;">
+                <h3 class="card-title fw-bold mb-0 text-dark"><i class="fas fa-history text-muted me-2"></i> Pendaftar Terbaru</h3>
+                <a href="{{ route('admin.enrollments.index') }}" class="btn btn-sm btn-light border fw-semibold text-primary">
+                    <i class="fas fa-external-link-alt me-1"></i> Lihat Semua
+                </a>
             </div>
             <div class="card-body table-responsive p-0">
-                <table class="table table-striped table-valign-middle">
+                <table class="table table-hover table-modern mb-0">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Pelatihan</th>
-                            <th>Training Center</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
+                            <th class="ps-4">Peserta (User)</th>
+                            <th>Modul Pelatihan</th>
+                            <th>Lembaga (TC)</th>
+                            <th>Tgl Pendaftaran</th>
+                            <th class="pe-4">Status</th>
                         </tr>
                     </thead>
                     <tbody id="recent-enrollments">
                         <tr>
-                            <td colspan="5" class="text-center py-4">
-                                <div class="spinner-border spinner-border-sm text-primary"></div> Memuat...
+                            <td colspan="5" class="text-center py-5">
+                                <div class="spinner-border spinner-border-sm text-primary mb-2"></div>
+                                <div class="text-muted small">Memuat data pendaftar...</div>
                             </td>
                         </tr>
                     </tbody>
@@ -127,7 +214,13 @@
             tbody.innerHTML = '';
 
             if(stats.recent_enrollments.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Belum ada pendaftar terbaru</td></tr>';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fs-2 mb-3 opacity-25"></i>
+                            <div class="small fw-medium">Belum ada pendaftar terbaru</div>
+                        </td>
+                    </tr>`;
                 return;
             }
 
@@ -135,19 +228,30 @@
                 const user = item.user ? item.user.name : '-';
                 const pel = item.pelatihan ? item.pelatihan.judul : '-';
                 const tc = item.training_center ? item.training_center.nama : '-';
-                const date = new Date(item.created_at).toLocaleDateString('id-ID');
 
-                const statusBadge = item.status === 'terdaftar'
-                    ? '<span class="badge bg-primary">Terdaftar</span>'
-                    : `<span class="badge bg-secondary">${item.status}</span>`;
+                // Format Date nicely
+                const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+                const date = new Date(item.created_at).toLocaleDateString('id-ID', dateOptions);
+
+                // Modern Status Badges
+                let statusBadge = '';
+                if(item.status === 'terdaftar' || item.status === 'aktif') {
+                    statusBadge = '<span class="badge rounded-pill" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59,130,246,0.2);">Aktif</span>';
+                } else if(item.status === 'selesai') {
+                    statusBadge = '<span class="badge rounded-pill" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">Selesai</span>';
+                } else if(item.status === 'batal') {
+                    statusBadge = '<span class="badge rounded-pill" style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);">Batal</span>';
+                } else {
+                    statusBadge = `<span class="badge bg-secondary rounded-pill">${item.status}</span>`;
+                }
 
                 const tr = `
                     <tr>
-                        <td class="fw-semibold">${user}</td>
-                        <td>${pel}</td>
-                        <td>${tc}</td>
-                        <td>${date}</td>
-                        <td>${statusBadge}</td>
+                        <td class="ps-4 fw-bold text-dark">${user}</td>
+                        <td class="fw-medium">${pel}</td>
+                        <td class="text-muted"><i class="fas fa-building small me-1 opacity-50"></i> ${tc}</td>
+                        <td class="text-muted small">${date}</td>
+                        <td class="pe-4">${statusBadge}</td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', tr);
@@ -155,6 +259,9 @@
 
         } catch (error) {
             console.error(error);
+            const tbody = document.getElementById('recent-enrollments');
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-danger small"><i class="fas fa-exclamation-circle me-1"></i> Gagal memuat data</td></tr>`;
+            window.showToast('error', 'Gagal memuat statistik');
         }
     });
 </script>

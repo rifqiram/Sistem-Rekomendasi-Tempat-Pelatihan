@@ -14,6 +14,15 @@ class SystemAuth
         // 1. Coba autentikasi bawaan (Sanctum) jika sudah ter-login
         if (Auth::guard('sanctum')->check()) {
             Auth::shouldUse('sanctum');
+
+            // Check if user is active
+            if (! Auth::user()->is_active) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akun Anda dinonaktifkan oleh administrator.'
+                ], 403);
+            }
+
             return $next($request);
         }
 
@@ -24,19 +33,23 @@ class SystemAuth
             $token = $request->input('api_token') ?: $request->header('X-API-Key');
         }
 
-        // Jika bearer token berbentuk token Sanctum (ada karakter '|') tapi tidak valid di check pertama,
-        // jangan cocokkan dengan api_token statis. Tapi jika token tidak mengandung '|',
-        // cocokkan dengan kolom api_token.
         if ($token && !str_contains($token, '|')) {
             $user = User::where('api_token', $token)->first();
             if ($user) {
+                if (! $user->is_active) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Akun Anda dinonaktifkan oleh administrator.'
+                    ], 403);
+                }
+
                 Auth::login($user);
                 $request->setUserResolver(fn () => $user);
                 return $next($request);
             }
         }
 
-        // Jika tidak terautentikasi, gunakan default Laravel Authenticate middleware dengan guard sanctum
+        // Jika tidak terautentikasi
         return app(\Illuminate\Auth\Middleware\Authenticate::class)->handle($request, function ($req) use ($next) {
             return $next($req);
         }, 'sanctum');

@@ -2,147 +2,224 @@
 
 @section('title', 'Login Admin | SRTP')
 
-@section('content')
+@push('styles')
 <style>
-    .admin-wrapper {
+    .auth-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 2rem;
     }
+
     .login-container {
         width: 100%;
-        max-width: 400px;
-        padding: 24px;
+        max-width: 420px;
     }
+
     .login-brand {
         display: flex;
         align-items: center;
-        gap: 10px;
         justify-content: center;
-        margin-bottom: 28px;
+        gap: 12px;
+        margin-bottom: 2rem;
     }
+
     .login-brand .logo-box {
-        width: 36px; height: 36px;
-        background: #4f46e5;
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-size: 16px;
-    }
-    .login-brand .logo-name {
-        font-size: 20px; font-weight: 700;
-        color: #111827; letter-spacing: -0.3px;
-    }
-    .login-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, var(--primary-color), var(--info-color, #3b82f6));
         border-radius: 12px;
-        padding: 32px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
     }
+
+    .login-brand .logo-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.5px;
+    }
+
+    .login-card {
+        background: var(--surface-color);
+        border: 1px solid var(--border-color, #e2e8f0);
+        border-radius: 1rem;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+
     .login-card h2 {
-        font-size: 20px; font-weight: 700;
-        color: #111827; margin: 0 0 4px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0 0 0.5rem;
         text-align: center;
     }
+
     .login-card .subtitle {
-        font-size: 13.5px; color: #6b7280;
-        text-align: center; margin: 0 0 24px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        text-align: center;
+        margin: 0 0 2rem;
     }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label-row label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    .input-with-icon {
+        position: relative;
+    }
+
+    .input-with-icon .form-control {
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 0.5rem;
+        border-color: #cbd5e1;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+
+    .input-with-icon .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .input-with-icon .field-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1rem;
+        pointer-events: none;
+        transition: color 0.2s;
+    }
+
+    .input-with-icon .form-control:focus + .field-icon,
+    .input-with-icon .form-control:not(:placeholder-shown) + .field-icon {
+        color: var(--primary-color);
+    }
+
     .login-divider {
-        height: 1px; background: #e5e7eb;
-        margin: 20px 0;
+        height: 1px;
+        background: #f1f5f9;
+        margin: 2rem 0;
     }
+
     .login-submit-btn {
         width: 100%;
-        padding: 10px;
-        background: #4f46e5;
-        color: #fff; border: none;
-        border-radius: 6px;
-        font-size: 14px; font-weight: 600;
-        cursor: pointer; font-family: inherit;
-        transition: background 0.15s ease, transform 0.15s ease;
-        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 0.875rem;
+        background: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
     }
-    .login-submit-btn:hover { background: #4338ca; transform: translateY(-1px); }
-    .login-submit-btn:active { transform: none; }
+
+    .login-submit-btn:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.3);
+    }
+
+    .login-submit-btn:active {
+        transform: none;
+    }
+
     .login-hint {
-        margin-top: 20px;
-        padding: 12px;
-        background: #f9fafb;
-        border-radius: 6px;
-        border: 1px solid #e5e7eb;
-        font-size: 12px;
-        color: #6b7280;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0.5rem;
+        border: 1px dashed rgba(59, 130, 246, 0.2);
+        font-size: 0.8rem;
+        color: var(--text-muted);
         text-align: center;
-        line-height: 1.6;
     }
+
     .login-hint code {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        padding: 1px 6px;
-        border-radius: 4px;
-        font-size: 11.5px;
-        color: #4f46e5;
-        font-weight: 500;
+        background: var(--surface-color);
+        border: 1px solid #cbd5e1;
+        padding: 0.1rem 0.4rem;
+        border-radius: 0.25rem;
+        color: var(--primary-color);
+        font-weight: 600;
     }
-    .input-with-icon { position: relative; }
-    .input-with-icon .form-control { padding-right: 38px; }
-    .input-with-icon .field-icon {
-        position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-        color: #9ca3af; font-size: 13px; pointer-events: none;
-    }
-    .form-label-row {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 5px;
-    }
-    .form-label-row label { font-size: 12.5px; font-weight: 500; color: #6b7280; }
 </style>
+@endpush
 
-<div class="login-container">
-    {{-- Brand --}}
-    <div class="login-brand">
-        <div class="logo-box"><i class="fas fa-bolt"></i></div>
-        <span class="logo-name">SRTP Admin</span>
-    </div>
+@section('content')
+<div class="auth-wrapper">
+    <div class="login-container">
+        {{-- Brand --}}
+        <div class="login-brand">
+            <div class="logo-box"><i class="fas fa-bolt"></i></div>
+            <span class="logo-name">SRTP Admin</span>
+        </div>
 
-    {{-- Card --}}
-    <div class="login-card">
-        <h2>Masuk ke Panel Admin</h2>
-        <p class="subtitle">Masukkan kredensial Anda untuk melanjutkan</p>
+        {{-- Card --}}
+        <div class="login-card">
+            <h2>Masuk ke Panel Admin</h2>
+            <p class="subtitle">Silakan masukkan kredensial Anda untuk melanjutkan</p>
 
-        <div id="loginAlert" class="alert alert-danger d-none" style="margin-bottom:16px;"></div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <div class="form-label-row">
-                    <label for="email">Alamat Email</label>
+            <form id="loginForm">
+                <div class="form-group">
+                    <div class="form-label-row">
+                        <label for="email">Alamat Email</label>
+                    </div>
+                    <div class="input-with-icon">
+                        <input type="email" id="email" class="form-control" placeholder="Masukkan email administrator" required>
+                        <span class="field-icon"><i class="fas fa-envelope"></i></span>
+                    </div>
                 </div>
-                <div class="input-with-icon">
-                    <input type="email" id="email" class="form-control" placeholder="Masukkan email Anda" required>
-                    <span class="field-icon"><i class="fas fa-envelope"></i></span>
+
+                <div class="form-group">
+                    <div class="form-label-row">
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="input-with-icon">
+                        <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                        <span class="field-icon"><i class="fas fa-lock"></i></span>
+                    </div>
                 </div>
+
+                <div class="login-divider"></div>
+
+                <button type="submit" class="login-submit-btn" id="loginSubmit">
+                    <i class="fas fa-sign-in-alt"></i> Masuk Sekarang
+                </button>
+            </form>
+
+            <div class="login-hint">
+                Demo: <code>admin@example.com</code> &nbsp;|&nbsp; <code>password</code>
             </div>
-
-            <div class="form-group">
-                <div class="form-label-row">
-                    <label for="password">Password</label>
-                </div>
-                <div class="input-with-icon">
-                    <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
-                    <span class="field-icon"><i class="fas fa-lock"></i></span>
-                </div>
-            </div>
-
-            <div class="login-divider"></div>
-
-            <button type="submit" class="login-submit-btn" id="loginSubmit">
-                <i class="fas fa-sign-in-alt"></i> Masuk
-            </button>
-        </form>
-
-        <div class="login-hint">
-            Demo: <code>admin@example.com</code> &nbsp;/&nbsp; <code>password</code>
         </div>
     </div>
 </div>
@@ -151,16 +228,13 @@
 @push('scripts')
 <script>
     const loginForm = document.getElementById('loginForm');
-    const loginAlert = document.getElementById('loginAlert');
     const loginSubmit = document.getElementById('loginSubmit');
 
     async function redirectToDashboard() {
         const token = getApiToken();
         const user = getApiUser();
 
-        if (!token) {
-            return;
-        }
+        if (!token) return;
 
         if (user && user.role) {
             window.location.href = user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
@@ -175,14 +249,12 @@
                 },
             });
 
-            if (!response.ok) {
-                return;
-            }
+            if (!response.ok) return;
 
             const payload = await response.json();
-            const user = payload.data?.user ?? payload.user;
-            setApiUser(user);
-            window.location.href = user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+            const userData = payload.data?.user ?? payload.user;
+            setApiUser(userData);
+            window.location.href = userData.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
         } catch (error) {
             // ignore and allow login form to show
         }
@@ -192,7 +264,8 @@
 
     loginForm.addEventListener('submit', async function (event) {
         event.preventDefault();
-        loginAlert.classList.add('d-none');
+
+        const originalText = loginSubmit.innerHTML;
         loginSubmit.disabled = true;
         loginSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
@@ -208,22 +281,30 @@
 
             if (!response.ok) {
                 const error = await response.json();
-                loginAlert.textContent = error.message || 'Login gagal. Periksa kembali email dan password Anda.';
-                loginAlert.classList.remove('d-none');
+                window.showAlert('error', 'Login Gagal', error.message || 'Periksa kembali email dan password Anda.');
                 return;
             }
 
             const payload = await response.json();
             const data = payload.data ?? payload;
+
+            // Show success toast before redirecting
+            window.showToast('success', 'Berhasil masuk');
+
             setApiToken(data.token);
             setApiUser(data.user);
-            window.location.href = data.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+
+            setTimeout(() => {
+                window.location.href = data.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+            }, 800);
+
         } catch (error) {
-            loginAlert.textContent = 'Terjadi kesalahan jaringan. Coba ulangi.';
-            loginAlert.classList.remove('d-none');
+            window.showAlert('error', 'Koneksi Terputus', 'Terjadi kesalahan jaringan. Silakan coba beberapa saat lagi.');
         } finally {
-            loginSubmit.disabled = false;
-            loginSubmit.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+            if(!loginSubmit.disabled || loginSubmit.innerHTML.includes('Memproses')) {
+                loginSubmit.disabled = false;
+                loginSubmit.innerHTML = originalText;
+            }
         }
     });
 </script>

@@ -378,7 +378,7 @@
             const data = payload.data ?? payload;
             setApiToken(data.token);
             setApiUser(data.user);
-            window.location.href = '/user/dashboard';
+            window.location.href = '/user/profile'; // Redirect to Profile/Questionnaire for Onboarding
         } catch (error) {
             showAlert('Terjadi kesalahan jaringan. Coba ulangi.', 'danger');
         } finally {

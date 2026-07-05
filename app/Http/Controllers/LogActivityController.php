@@ -37,4 +37,16 @@ class LogActivityController extends Controller
 
         return $this->successResponse($logs, 'Log aktivitas berhasil diambil');
     }
+
+    public function destroy(\Illuminate\Http\Request $request, $id)
+    {
+        if ($response = $this->authorizeAdmin($request)) {
+            return $response;
+        }
+
+        $log = LogActivity::findOrFail($id);
+        $log->delete();
+
+        return $this->successResponse(null, 'Log aktivitas berhasil dihapus');
+    }
 }

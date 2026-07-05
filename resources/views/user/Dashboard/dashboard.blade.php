@@ -1,330 +1,338 @@
 @extends('layouts.user')
 
-@section('content')
+@section('title', 'Dashboard')
+
+@push('styles')
 <style>
-    /* ===== USER SHARED STYLES ===== */
-    .field-hint {
-        display: block;
-        margin-top: 4px;
-        font-size: 12px;
-        color: var(--color-text-muted);
-    }
-    .field-error {
-        display: none;
-        margin-top: 4px;
-        font-size: 12.5px;
-        color: var(--color-danger);
-        font-weight: 500;
-    }
-    .field-error.show { display: block; }
-    .form-control.is-invalid {
-        border-color: var(--color-danger) !important;
-        box-shadow: 0 0 0 3px rgba(239,68,68,0.08) !important;
-    }
-
-    .spinner-inline {
-        width: 14px; height: 14px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-        display: inline-block;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .alert-success {
-        background: var(--color-success-light);
-        border: 1px solid #6EE7B7;
-        color: #065F46;
-        padding: 12px 16px;
-        border-radius: var(--radius-sm);
-        font-size: 13.5px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .alert-info-box {
-        background: var(--color-info-light);
-        border: 1px solid #93C5FD;
-        color: #1E40AF;
-        padding: 12px 16px;
-        border-radius: var(--radius-sm);
-        font-size: 13px;
-        line-height: 1.5;
-        margin-bottom: 18px;
-    }
-
-    /* Welcome card */
+    /* Welcome Card Modernization */
     .welcome-card {
-        background: linear-gradient(135deg, var(--color-primary), #7C3AED);
+        background: linear-gradient(135deg, var(--primary-color), var(--info-color));
         border-radius: var(--radius-lg);
-        padding: 28px;
+        padding: 2rem;
         color: #fff;
-        margin-bottom: 20px;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
     }
+
+    .welcome-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%;
+    }
+
     .welcome-card h2 {
-        font-size: 20px;
+        font-size: 1.5rem;
         font-weight: 700;
-        margin-bottom: 6px;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
     }
+
     .welcome-card p {
-        font-size: 14px;
+        font-size: 0.95rem;
         opacity: 0.9;
         margin: 0;
+        position: relative;
+        z-index: 1;
     }
 
-    /* Quick action cards */
-    .quick-actions {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 16px;
-        margin-bottom: 20px;
-    }
+    /* Modern Quick Actions */
     .action-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        padding: 20px;
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
         text-decoration: none;
-        color: var(--color-text);
-        transition: all 0.2s ease;
-        cursor: pointer;
-        display: block;
+        color: var(--text-main);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        box-shadow: var(--shadow-sm);
     }
+
     .action-card:hover {
+        transform: translateY(-4px);
         box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
-        border-color: var(--color-primary);
+        border-color: var(--primary-color);
     }
-    .action-card .action-icon {
-        width: 44px; height: 44px;
-        border-radius: var(--radius);
+
+    .action-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
-        margin-bottom: 12px;
-    }
-    .action-card .action-icon.purple { background: #EEF2FF; color: var(--color-primary); }
-    .action-card .action-icon.green { background: var(--color-success-light); color: var(--color-success); }
-    .action-card .action-icon.blue { background: var(--color-info-light); color: var(--color-info); }
-    .action-card .action-icon.orange { background: var(--color-warning-light); color: var(--color-warning); }
-    .action-card h4 {
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-    .action-card p {
-        font-size: 12.5px;
-        color: var(--color-text-secondary);
-        margin: 0;
-        line-height: 1.4;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
     }
 
-    /* Profile completeness */
-    .progress-bar-container {
-        background: var(--color-bg);
-        border-radius: 10px;
-        height: 8px;
+    .action-card:hover .action-icon-wrapper {
+        transform: scale(1.05);
+    }
+
+    /* Stats Card Modernization */
+    .stat-card-modern {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .stat-card-modern:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon-wrapper {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    /* Colors for Icons */
+    .bg-indigo-subtle { background-color: rgba(79, 70, 229, 0.1); color: var(--primary-color); }
+    .bg-emerald-subtle { background-color: rgba(16, 185, 129, 0.1); color: var(--secondary-color); }
+    .bg-amber-subtle { background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    .bg-blue-subtle { background-color: rgba(59, 130, 246, 0.1); color: var(--info-color); }
+
+    /* Custom Progress Bar */
+    .progress-custom {
+        height: 10px;
+        background-color: var(--border-color);
+        border-radius: 50rem;
         overflow: hidden;
-        margin-top: 8px;
-    }
-    .progress-bar-fill {
-        height: 100%;
-        background: var(--color-primary);
-        border-radius: 10px;
-        transition: width 0.5s ease;
     }
 
-    @media (max-width: 768px) {
-        .quick-actions { grid-template-columns: 1fr; }
+    .progress-bar-custom {
+        height: 100%;
+        background: linear-gradient(90deg, var(--secondary-color), #34d399);
+        border-radius: 50rem;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
 </style>
+@endpush
 
-        {{-- Welcome Card --}}
-        <div class="welcome-card">
-            <h2>Selamat datang, <span id="welcomeName">Pengguna</span>!</h2>
-            <p>Kelola profil, keahlian, dan temukan pelatihan yang sesuai untuk Anda.</p>
-        </div>
+@section('content')
+    {{-- Welcome Card --}}
+    <div class="welcome-card mb-4">
+        <h2>Selamat datang, <span id="welcomeName">Pengguna</span>!</h2>
+        <p>Mari tingkatkan karir Anda dengan menemukan program pelatihan terbaik yang sesuai dengan minat dan kualifikasi Anda.</p>
+    </div>
 
-        {{-- Profile Completeness --}}
-        <div class="card mb-4" id="profileCard">
-            <div class="card-body">
-                <div style="display:flex; align-items:center; justify-content:space-between;">
-                    <div>
-                        <h4 style="font-size:14px; font-weight:600; margin-bottom:2px;">Kelengkapan Profil</h4>
-                        <p style="font-size:12.5px; color:var(--color-text-secondary); margin:0;" id="profileStatus">Memuat...</p>
+    <div class="row g-4 mb-5">
+        {{-- Left Column: Profile Status & Stats --}}
+        <div class="col-lg-8">
+            {{-- Profile Completeness Card --}}
+            <div class="card border-0 shadow-sm rounded-4 mb-4" style="background: var(--surface-color);">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-1" style="color: var(--text-main);">Kelengkapan Profil</h5>
+                            <p class="text-muted mb-0 small" id="profileStatus">Menganalisis kelengkapan data diri...</p>
+                        </div>
+                        <h3 class="fw-bold mb-0" style="color: var(--secondary-color);" id="profilePercent">0%</h3>
                     </div>
-                    <span style="font-size:20px; font-weight:700; color:var(--color-primary);" id="profilePercent">0%</span>
-                </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar-fill" id="profileBar" style="width:0%"></div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Stats Grid --}}
-        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-            <div class="stat-card">
-                <div class="stat-icon info"><i class="fas fa-clipboard-check"></i></div>
-                <div class="stat-body">
-                    <div class="stat-value" id="countKeahlian">0</div>
-                    <div class="stat-label">Kuesioner Diisi</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon success"><i class="fas fa-chalkboard-teacher"></i></div>
-                <div class="stat-body">
-                    <div class="stat-value" id="countRekomendasi">0</div>
-                    <div class="stat-label">Rekomendasi</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon warning"><i class="fas fa-file-signature"></i></div>
-                <div class="stat-body">
-                    <div class="stat-value" id="countPendaftaran">0</div>
-                    <div class="stat-label">Terdaftar</div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Quick Actions --}}
-        <div class="page-header" style="margin-top:8px;">
-            <div>
-                <h1 style="font-size:16px;">Aksi Cepat</h1>
-                <p>Pilih menu untuk memulai</p>
-            </div>
-        </div>
-
-        <div class="quick-actions">
-            <a href="{{ route('user.profile') }}" class="action-card">
-                <div class="action-icon purple"><i class="fas fa-user-edit"></i></div>
-                <h4>Lengkapi Profil</h4>
-                <p>Perbarui data pribadi Anda</p>
-            </a>
-            <a href="{{ route('user.questionnaire') }}" class="action-card">
-                <div class="action-icon green"><i class="fas fa-cogs"></i></div>
-                <h4>Isi Kuesioner</h4>
-                <p>Sesuaikan preferensi Anda</p>
-            </a>
-            <a href="{{ route('user.recommendations') }}" class="action-card">
-                <div class="action-icon blue"><i class="fas fa-chalkboard-teacher"></i></div>
-                <h4>Rekomendasi</h4>
-                <p>Lihat TC terbaik untuk Anda</p>
-            </a>
-            <a href="{{ route('user.enrollments') }}" class="action-card">
-                <div class="action-icon orange"><i class="fas fa-history"></i></div>
-                <h4>Riwayat Pendaftaran</h4>
-                <p>Lihat pelatihan yang didaftar</p>
-            </a>
-        </div>
-
-        {{-- Account Info --}}
-        <div class="card mt-4">
-            <div class="card-header">
-                <span class="card-title fw-bold">Informasi Akun</span>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <strong>Nama:</strong>
-                        <div id="infoName" style="margin-top:4px; color:var(--color-text-secondary);">-</div>
+                    <div class="progress-custom">
+                        <div class="progress-bar-custom" id="profileBar" style="width:0%"></div>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <strong>Email:</strong>
-                        <div id="infoEmail" style="margin-top:4px; color:var(--color-text-secondary);">-</div>
+                </div>
+            </div>
+
+            {{-- Stats Grid Native Bootstrap --}}
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="stat-card-modern">
+                        <div class="stat-icon-wrapper bg-indigo-subtle">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <div class="fs-4 fw-bold lh-1 mb-1" style="color: var(--text-main);" id="countKeahlian">0</div>
+                            <div class="text-muted small fw-medium">Kuesioner Diisi</div>
+                        </div>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <strong>Role:</strong>
-                        <div style="margin-top:4px;"><span class="badge bg-info text-white" id="infoRole">-</span></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card-modern">
+                        <div class="stat-icon-wrapper bg-blue-subtle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div>
+                            <div class="fs-4 fw-bold lh-1 mb-1" style="color: var(--text-main);" id="countRekomendasi">0</div>
+                            <div class="text-muted small fw-medium">Rekomendasi</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card-modern">
+                        <div class="stat-icon-wrapper bg-amber-subtle">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div>
+                            <div class="fs-4 fw-bold lh-1 mb-1" style="color: var(--text-main);" id="countEnrollment">0</div>
+                            <div class="text-muted small fw-medium">Terdaftar</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- Right Column: Account Info --}}
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100" style="background: var(--surface-color);">
+                <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold mb-0" style="color: var(--text-main);">Informasi Akun</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="p-3 rounded-3" style="background-color: var(--bg-color);">
+                            <span class="d-block text-muted small fw-semibold mb-1">NAMA LENGKAP</span>
+                            <span class="fw-bold text-dark" id="infoName">-</span>
+                        </div>
+                        <div class="p-3 rounded-3" style="background-color: var(--bg-color);">
+                            <span class="d-block text-muted small fw-semibold mb-1">ALAMAT EMAIL</span>
+                            <span class="fw-bold text-dark text-break" id="infoEmail">-</span>
+                        </div>
+                        <div class="p-3 rounded-3" style="background-color: var(--bg-color);">
+                            <span class="d-block text-muted small fw-semibold mb-1">HAK AKSES</span>
+                            <span class="badge" style="background-color: var(--primary-color);" id="infoRole">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Quick Actions --}}
+    <div class="mb-3">
+        <h5 class="fw-bold mb-1" style="color: var(--text-main);">Aksi Cepat</h5>
+        <p class="text-muted small">Navigasi pintas ke fitur utama platform</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('user.profile') }}" class="action-card text-decoration-none">
+                <div class="action-icon-wrapper bg-indigo-subtle">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <h6 class="fw-bold mb-1" style="color: var(--text-main);">Lengkapi Profil</h6>
+                <p class="text-muted small mb-0 lh-sm">Perbarui data diri & lokasi</p>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('user.questionnaire') }}" class="action-card text-decoration-none">
+                <div class="action-icon-wrapper bg-emerald-subtle">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h6 class="fw-bold mb-1" style="color: var(--text-main);">Isi Kuesioner</h6>
+                <p class="text-muted small mb-0 lh-sm">Tentukan kriteria pelatihan</p>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('user.recommendations') }}" class="action-card text-decoration-none">
+                <div class="action-icon-wrapper bg-blue-subtle">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h6 class="fw-bold mb-1" style="color: var(--text-main);">Rekomendasi</h6>
+                <p class="text-muted small mb-0 lh-sm">Lihat pelatihan terbaik</p>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('user.enrollments') }}" class="action-card text-decoration-none">
+                <div class="action-icon-wrapper bg-amber-subtle">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h6 class="fw-bold mb-1" style="color: var(--text-main);">Riwayat Pendaftaran</h6>
+                <p class="text-muted small mb-0 lh-sm">Cek status pengajuan Anda</p>
+            </a>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
 <script>
-    const user = getApiUser();
-    const token = getApiToken();
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = window.getApiUser();
+        const token = window.getApiToken();
 
-    if (!token) {
-        window.location.href = '/user/login';
-    }
-    if (!user || !user.role) {
-        window.location.href = '/user/login';
-    }
-    if (user.role !== 'user') {
-        window.location.href = '/admin/dashboard';
-    }
-
-    // Populate user info
-    const displayName = user.name || user.email || 'Pengguna';
-    document.getElementById('welcomeName').textContent = displayName.split(' ')[0];
-    document.getElementById('infoName').textContent = user.name || '-';
-    document.getElementById('infoEmail').textContent = user.email || '-';
-    document.getElementById('infoRole').textContent = user.role || '-';
-
-    // Load dashboard stats & Redirect Flow Logic
-    async function loadDashboardData() {
-        try {
-            // Load base profile
-            const profile = await window.authFetch(window.apiBase + '/profile').then(window.parseApi).catch(() => null);
-
-            // AUTOMATIC REDIRECT FLOW - "Gatekeeper"
-            // Sesuai dengan spesifikasi alur sistem yang kaku:
-            // Dashboard -> Cek Profil -> Belum -> Arahkan ke Profil
-            // Profil -> Cek Kuesioner -> Belum -> Arahkan ke Kuesioner
-            // Kuesioner -> Sudah -> Arahkan ke Rekomendasi
-
-            if (!profile || !profile.age || !profile.latitude) {
-                // Profil Belum Lengkap
-                window.location.href = '/user/profile';
-                return;
-            }
-
-            const kuesioner = await window.authFetch(window.apiBase + '/questionnaire').then(window.parseApi).catch(() => null);
-
-            if (!kuesioner || !kuesioner.bidang_diminati) {
-                // Profil sudah, tapi Kuesioner Belum
-                window.location.href = '/user/questionnaire';
-                return;
-            }
-
-            // Keduanya sudah lengkap.
-            // Jika Anda ingin user otomatis dilempar ke rekomendasi, nyalakan baris di bawah:
-            // window.location.href = '/user/recommendations';
-            // Namun secara best practice UI, user tetap boleh mengakses Dashboard mereka.
-
-            let profileComplete = 100;
-
-            let rekomendasiCount = 0;
-            try {
-                const rekom = await window.authFetch(window.apiBase + '/recommendations').then(window.parseApi);
-                rekomendasiCount = Array.isArray(rekom) ? rekom.length : 0;
-            } catch (e) {}
-
-            let pendaftaranCount = 0;
-            try {
-                const enrolls = await window.authFetch(window.apiBase + '/enrollments').then(window.parseApi);
-                pendaftaranCount = Array.isArray(enrolls) ? enrolls.length : 0;
-            } catch (e) {}
-
-            document.getElementById('countKeahlian').textContent = kuesioner ? 1 : 0;
-            document.getElementById('countRekomendasi').textContent = rekomendasiCount;
-            document.getElementById('countPendaftaran').textContent = pendaftaranCount;
-
-            document.getElementById('profilePercent').textContent = profileComplete + '%';
-            document.getElementById('profileBar').style.width = profileComplete + '%';
-            document.getElementById('profileBar').style.background = 'var(--color-success)';
-            document.getElementById('profileStatus').textContent = 'Profil Anda sudah lengkap!';
-
-        } catch (e) {
-            console.error('Dashboard load error:', e);
+        if (!token || !user || user.role !== 'user') {
+            return; // Handled by layout
         }
-    }
 
-    loadDashboardData();
+        // Populate user info
+        const displayName = user.name || user.email || 'Pengguna';
+        document.getElementById('welcomeName').textContent = displayName.split(' ')[0];
+        document.getElementById('infoName').textContent = user.name || '-';
+        document.getElementById('infoEmail').textContent = user.email || '-';
+        document.getElementById('infoRole').textContent = user.role ? user.role.toUpperCase() : '-';
 
+        // Load dashboard stats
+        async function loadDashboardData() {
+            try {
+                const profile = await window.authFetch(window.apiBase + '/profile').then(window.parseApi).catch(() => null);
+
+                // GATEKEEPER LOGIC
+                if (!profile || !profile.age || !profile.latitude) {
+                    window.location.href = '/user/profile';
+                    return;
+                }
+
+                const kuesioner = await window.authFetch(window.apiBase + '/questionnaire').then(window.parseApi).catch(() => null);
+
+                if (!kuesioner || !kuesioner.bidang_diminati) {
+                    window.location.href = '/user/questionnaire';
+                    return;
+                }
+
+                // Update UI based on completeness
+                const profilePercentEl = document.getElementById('profilePercent');
+                const profileBarEl = document.getElementById('profileBar');
+                const profileStatusEl = document.getElementById('profileStatus');
+
+                profilePercentEl.textContent = '100%';
+                profileBarEl.style.width = '100%';
+                profileStatusEl.textContent = 'Profil & Kuesioner Anda sudah lengkap. Siap mencari pelatihan!';
+
+                // Fetch Stats
+                let rekomendasiCount = 0;
+                try {
+                    const rekom = await window.authFetch(window.apiBase + '/recommendations').then(window.parseApi);
+                    rekomendasiCount = Array.isArray(rekom) ? rekom.length : 0;
+                } catch (e) {}
+
+                let enrollmentCount = 0;
+                try {
+                    const enrolls = await window.authFetch(window.apiBase + '/enrollments').then(window.parseApi);
+                    enrollmentCount = Array.isArray(enrolls) ? enrolls.length : 0;
+                } catch (e) {}
+
+                document.getElementById('countKeahlian').textContent = kuesioner ? 1 : 0;
+                document.getElementById('countRekomendasi').textContent = rekomendasiCount;
+                document.getElementById('countEnrollment').textContent = enrollmentCount;
+
+            } catch (e) {
+                console.error('Dashboard load error:', e);
+            }
+        }
+
+        loadDashboardData();
+    });
 </script>
 @endpush

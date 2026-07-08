@@ -203,3 +203,41 @@ Sebagai bentuk jaminan kualitas perangkat lunak (*Quality Assurance*), Tim Senio
    - \`SecurityAndLogTest\`: Pengujian ketat untuk keamanan akses (*Gate/Middleware*). Meliputi pengujian fitur Blokir Akun (*Ban User*), dimana *SystemAuth Middleware* akan segera menggagalkan akses user yang dinonaktifkan meski token JWT/Sanctum-nya masih berlaku. Termasuk validasi penulisan jejak otomatis ke dalam tabel *Log Activity*.
 
 *Seluruh test suites (skenario uji) ini menjamin bahwa Sistem Rekomendasi Tempat Pelatihan bersifat robust, tangguh dari regresi (bug berulang), dan siap untuk fase production.*
+
+---
+
+## 9. Patch Notes & Bug Fixes (Hotfix)
+Melalui audit arsitektur dan debugging lanjutan, beberapa bug kritis dan technical debt yang tersisa telah diselesaikan:
+
+1. **Perbaikan Relasi Eloquent (Model)**:
+   - Menambahkan relasi `enrollments()` dan `logActivities()` yang hilang pada model `User`, `TrainingCenter`, dan `Pelatihan` sesuai cetak biru skema.
+   - Memperbaiki deklarasi *foreign key* yang salah sasaran pada `Pelatihan->recommendations()`, mencegah SQL Crash (HTTP 500) saat admin mencoba menghapus entitas pelatihan.
+
+2. **Optimalisasi Recommendation Engine**:
+   - *Distance Bug (Stale Data)*: Memperbaiki masalah data jarak yang basi dengan me-trigger (memanggil) kalkulasi otomatis `RecommendationEngine` sesaat setelah pengguna memperbarui titik lokasi koordinatnya di menu Profil (`ProfileController::store`).
+   - *Dynamic Max Distance*: Menghapus nilai *hardcode* limit 100km pada perhitungan haversine. Engine kini membaca preferensi cerdas `jarak_maksimal` milik masing-masing pengguna dari hasil kuesioner mereka secara dinamis.
+
+3. **Perbaikan Bug UI/Javascript di Panel Admin**:
+   - *Data Pelatihan Gagal Tampil*: Memperbaiki sisa-sisa pemanggilan *legacy API endpoint* di file `index.blade.php` (yang sebelumnya masih mengakses rute `/api/pelatihan`) menjadi rute terstandardisasi `/api/trainings`. Data tabel kini sukses di-render.
+   - *Tombol Save Hilang (Off-screen)*: Memperbaiki layout HTML Modal Bootstrap di halaman Pelatihan dan Training Center. Tag `<form>` yang sebelumnya diselipkan secara ilegal di tengah-tengah kerangka *Flexbox Modal Content* telah di-refactor menjadi *wrapper* utama, sehingga modal dapat digulir (*scrollable*) dan tombol simpan kembali mengambang (*sticky*) di bawah viewport.
+   - *State Button Terkunci*: Memperbaiki celah logika Javascript (`btnSave.disabled = true`) yang membuat tombol simpan tak dapat ditekan (terkunci secara permanen) pada Edit yang ke-2. State tombol kini langsung di-*reset* ulang setelah operasi penyimpanan berhasil maupun saat form *modal* kembali dirender.
+
+4. **Peningkatan Test Coverage & Infrastruktur CI**:
+   - Menambahkan dua buah *Feature Test* baru di `AdminCrudTest` untuk secara spesifik menguji rute Delete Pelatihan.
+   - Memastikan server menolak penghapusan `Pelatihan` (HTTP 400) apabila modul tersebut telah menampung *Enrollment* peserta.
+   - Mengalihkan eksekusi `phpunit.xml` secara penuh menggunakan `sqlite :memory:` untuk mempercepat siklus TDD (*Test-Driven Development*) tanpa bergantung pada daemon MySQL eksternal.
+
+5. **Migrasi Geolocation (GIS) pada Training Center**:
+   - Mengintegrasikan antarmuka interaktif **Leaflet.js** dan Reverse-Geocoding **OpenStreetMap Nominatim** ke dalam form Tambah/Edit Training Center di Panel Admin.
+   - Administrator tidak perlu lagi mengetikkan Latitude/Longitude dan Alamat secara manual. Pin peta yang digeser otomatis akan memicu konversi alamat (Reverse-Geocode) dan mengisi input teks, meminimalisir kesalahan *typo*.
+   - Fitur deteksi GPS (Navigator) disertakan agar mempermudah admin yang sedang berada di lokasi Training Center.
+   - Perubahan ini 100% *Frontend-isolated*. Tidak ada skema *Database*, `Controller`, atau `RecommendationEngine` yang diubah, namun kualitas _input data_ jarak (Haversine) yang dihasilkan meningkat secara drastis (Presisi Data Tinggi).
+
+6. **Integrasi Navigasi Eksternal (Google Maps Smart Link)**:
+   - *Database Migration*: Menambahkan kolom eksklusif `google_maps_url` (tipe *Text*, *Nullable*) pada struktur tabel `training_centers` demi mendokumentasikan rute URL pihak ketiga.
+   - *Backend API Security*: Memutakhirkan `FormRequest Validation` untuk mengijinkan input opsional yang ketat (*URL Formatted Only*) sehingga memproteksi database dari injeksi *string* kotor.
+   - *Admin Panel*: Menyisipkan field *URL Geolocation Opsional* di dalam modal *Training Center* Admin secara ergonomis di area informasi Geografis.
+   - *User Experience (Conditional Rendering UI)*: Di panel Detail Rekomendasi Pelatihan (Frontend User), sistem dibekali logika _Conditional Rendering_ yang cerdas:
+     - Jika link G-Maps dimasukkan oleh admin, maka tombol **"Lihat Lokasi"** akan dirender, yang jika diklik akan melempar *user* membuka *App/Browser* Google Maps (*External Routing*).
+     - Jika link G-Maps kosong, tombol tersebut dihancurkan sepenuhnya dari _DOM_ (bukan sekadar di-*disable*) sehingga menghasilkan UI panel Detail yang bersih dan elegan (Tanpa peta mini yang memberatkan memori perangkat *client*).
+   - *Isolasi Sistem (Aman)*: Sifat tautan opsional eksternal ini berfungsi murni sebagai fitur navigasi sekunder (_Wayfinding UX_), sehingga integritas `Recommendation Engine` tetap aman 100% dan kalkulasi _Haversine Distance_ tidak dipengaruhi sama sekali.

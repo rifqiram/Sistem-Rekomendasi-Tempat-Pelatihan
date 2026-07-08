@@ -66,6 +66,7 @@
     }
 
     .form-label {
+        
         font-size: 0.85rem;
         font-weight: 600;
         color: #475569;
@@ -127,13 +128,13 @@
 <!-- Modal CRUD -->
 <div class="modal fade" id="pelatihanModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+        <form id="pelatihanForm" class="modal-content">
             <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
                 <h5 class="modal-title fw-bold" id="pelatihanModalLabel">Tambah Pelatihan Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="pelatihanForm">
-                <div class="modal-body p-4">
+
+            <div class="modal-body p-4">
                     <input type="hidden" id="pelatihan_id">
 
                     <div class="row g-3 mb-3">
@@ -225,12 +226,11 @@
                     </div>
 
                 </div>
-                <div class="modal-footer border-top-0 px-4 pb-4">
-                    <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Batalkan</button>
-                    <button type="submit" class="btn btn-primary fw-bold px-4" id="btnSave">Simpan Pelatihan</button>
-                </div>
-            </form>
-        </div>
+            <div class="modal-footer border-top-0 px-4 pb-4">
+                <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Batalkan</button>
+                <button type="submit" class="btn btn-primary fw-bold px-4" id="btnSave">Simpan Pelatihan</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
@@ -266,7 +266,7 @@
     async function loadData() {
         const tbody = document.getElementById('pelatihan-table-body');
         try {
-            const rawRes = await window.authFetch(`${window.apiBase}/pelatihan`).then(window.parseApi);
+            const rawRes = await window.authFetch(`${window.apiBase}/trainings`).then(window.parseApi);
             const dataArray = Array.isArray(rawRes) ? rawRes : (rawRes.data || []);
 
             tbody.innerHTML = '';
@@ -327,6 +327,12 @@
     function showModal(mode) {
         document.getElementById('pelatihanForm').reset();
 
+        const btnSave = document.getElementById('btnSave');
+        if (btnSave) {
+            btnSave.disabled = false;
+            btnSave.innerHTML = 'Simpan Pelatihan';
+        }
+
         if (mode === 'create') {
             document.getElementById('pelatihanModalLabel').textContent = 'Tambah Pelatihan Baru';
             document.getElementById('pelatihan_id').value = '';
@@ -373,7 +379,7 @@
             is_active: document.getElementById('is_active').value === '1',
         };
 
-        const url = id ? `${window.apiBase}/pelatihan/${id}` : `${window.apiBase}/pelatihan`;
+        const url = id ? `${window.apiBase}/trainings/${id}` : `${window.apiBase}/trainings`;
         const methodHttp = id ? 'PUT' : 'POST';
 
         try {
@@ -399,6 +405,7 @@
             pelatihanModal.hide();
             window.showToast('success', 'Data pelatihan berhasil disimpan!');
             loadData();
+            btnSave.disabled = false;
             btnSave.innerHTML = originalText;
         } catch (error) {
             window.showAlert('error', 'Gagal!', error.message);
@@ -414,7 +421,7 @@
             'Ya, Hapus',
             async () => {
                 try {
-                    const response = await window.authFetch(`${window.apiBase}/pelatihan/${id}`, {
+                    const response = await window.authFetch(`${window.apiBase}/trainings/${id}`, {
                         method: 'DELETE'
                     });
 

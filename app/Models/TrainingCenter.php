@@ -21,4 +21,14 @@ class TrainingCenter extends Model
     {
         return $this->hasMany(Recommendation::class, 'training_center_id');
     }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'training_center_id');
+    }
+
+    public function logActivities()
+    {
+        return $this->hasMany(LogActivity::class, 'training_center_id');
+    }
 }

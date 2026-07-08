@@ -191,4 +191,60 @@ class AdminCrudTest extends TestCase
 
         $response->assertStatus(422);
     }
+
+    public function test_admin_can_delete_pelatihan(): void
+    {
+        $this->actingAs($this->admin);
+
+        $tc = TrainingCenter::create([
+            'nama' => 'TC A',
+            'alamat' => 'Alamat',
+            'telepon' => '000',
+        ]);
+
+        $pelatihan = Pelatihan::create([
+            'judul' => 'Bootcamp QA',
+            'training_center_id' => $tc->id,
+            'tanggal_mulai' => '2026-10-01',
+            'tanggal_selesai' => '2026-11-01',
+        ]);
+
+        $response = $this->deleteJson("/api/trainings/{$pelatihan->id}");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('tabel_pelatihan', ['id' => $pelatihan->id]);
+    }
+
+    public function test_admin_cannot_delete_pelatihan_with_enrollments(): void
+    {
+        $this->actingAs($this->admin);
+
+        $tc = TrainingCenter::create([
+            'nama' => 'TC B',
+            'alamat' => 'Alamat B',
+            'telepon' => '111',
+        ]);
+
+        $pelatihan = Pelatihan::create([
+            'judul' => 'Bootcamp Backend',
+            'training_center_id' => $tc->id,
+            'tanggal_mulai' => '2026-10-01',
+            'tanggal_selesai' => '2026-11-01',
+        ]);
+
+        \App\Models\Enrollment::create([
+            'user_id' => $this->user->id,
+            'training_center_id' => $tc->id,
+            'pelatihan_id' => $pelatihan->id,
+            'tanggal_daftar' => now(),
+            'status' => 'terdaftar',
+        ]);
+
+        $response = $this->deleteJson("/api/trainings/{$pelatihan->id}");
+
+        $response->assertStatus(400)
+                 ->assertJsonPath('message', 'Masih ada peserta terdaftar');
+
+        $this->assertDatabaseHas('tabel_pelatihan', ['id' => $pelatihan->id]);
+    }
 }

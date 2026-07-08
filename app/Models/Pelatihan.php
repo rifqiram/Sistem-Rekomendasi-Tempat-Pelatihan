@@ -34,13 +34,18 @@ class Pelatihan extends Model
         'tanggal_selesai' => 'date',
     ];
 
-    public function recommendations()
-    {
-        return $this->hasMany(Recommendation::class, 'training_id');
-    }
-
     public function trainingCenter()
     {
         return $this->belongsTo(TrainingCenter::class, 'training_center_id');
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'pelatihan_id');
+    }
+
+    public function logActivities()
+    {
+        return $this->hasMany(LogActivity::class, 'pelatihan_id');
     }
 }

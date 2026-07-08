@@ -25,7 +25,7 @@ class ProfileController extends Controller
     /**
      * Simpan atau update profile user.
      */
-    public function store(StoreProfileRequest $request)
+    public function store(StoreProfileRequest $request, \App\Services\RecommendationEngine $engine)
     {
         $data = $request->validated();
 
@@ -33,6 +33,10 @@ class ProfileController extends Controller
             ['user_id' => $request->user()->id],
             $data
         );
+
+        // Setelah profil (lokasi peta) diperbarui, jalankan ulang Recommendation Engine
+        // agar skor jarak (Distance Score) terkalibrasi ulang.
+        $engine->generateForUser($request->user()->id);
 
         return $this->successResponse($profile, 'Profile berhasil disimpan');
     }

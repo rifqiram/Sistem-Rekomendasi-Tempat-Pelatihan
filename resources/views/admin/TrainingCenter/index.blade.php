@@ -8,6 +8,8 @@
 @endsection
 
 @push('styles')
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <style>
     /* Admin Table Modernization */
     .card-modern {
@@ -63,6 +65,15 @@
         border: none;
         border-radius: 0.75rem;
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    /* Peta Leaflet */
+    #map {
+        height: 300px;
+        width: 100%;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
+        z-index: 1; /* Mencegah modal bootstrap glitch */
     }
 
     .form-label {
@@ -126,13 +137,13 @@
 <!-- Modal CRUD -->
 <div class="modal fade" id="tcModal" tabindex="-1" aria-labelledby="tcModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+        <form id="tcForm" class="modal-content">
             <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
                 <h5 class="modal-title fw-bold" id="tcModalLabel">Tambah Training Center</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="tcForm">
-                <div class="modal-body p-4">
+
+            <div class="modal-body p-4">
                     <input type="hidden" id="tc_id">
 
                     <div class="row g-3 mb-3">
@@ -155,18 +166,36 @@
                     </div>
 
                     <div class="p-3 mb-3 bg-primary bg-opacity-10 rounded-3 border border-primary border-opacity-25">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-map-marked-alt text-primary me-2"></i>
-                            <strong class="text-primary small">Sistem Geolocation (Opsional)</strong>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div>
+                                <i class="fas fa-map-marked-alt text-primary me-2"></i>
+                                <strong class="text-primary small">Sistem Geolocation (Otomatis)</strong>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold px-3" id="btnGetCurrentLocation">
+                                <i class="fas fa-crosshairs me-1"></i> Deteksi Lokasi
+                            </button>
                         </div>
-                        <p class="text-muted small mb-2 lh-sm">Data Latitude dan Longitude digunakan oleh Mesin Algoritma untuk menghitung jarak ke pengguna. Jika dikosongkan, skor jarak otomatis bernilai 0.</p>
-                        <div class="row g-2">
+                        <p class="text-muted small mb-3 lh-sm">Geser pin merah pada peta di bawah ini untuk menentukan titik koordinat pasti gedung Lembaga. Koordinat akan diisi secara otomatis.</p>
+
+                        <div class="mb-3">
+                            <div id="map"></div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
                             <div class="col-md-6">
-                                <input type="number" step="any" class="form-control form-control-sm" id="latitude" placeholder="Latitude (Cth: -7.xxx)">
+                                <label class="form-label mb-1" style="font-size: 0.75rem;">Latitude</label>
+                                <input type="number" step="any" class="form-control form-control-sm bg-white" id="latitude" placeholder="Latitude otomatis" readonly>
                             </div>
                             <div class="col-md-6">
-                                <input type="number" step="any" class="form-control form-control-sm" id="longitude" placeholder="Longitude (Cth: 111.xxx)">
+                                <label class="form-label mb-1" style="font-size: 0.75rem;">Longitude</label>
+                                <input type="number" step="any" class="form-control form-control-sm bg-white" id="longitude" placeholder="Longitude otomatis" readonly>
                             </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label mb-1" style="font-size: 0.75rem;"><i class="fab fa-google text-danger"></i> Link URL Google Maps <span class="text-muted fw-normal">(Opsional)</span></label>
+                            <input type="url" class="form-control form-control-sm" id="google_maps_url" placeholder="https://maps.google.com/...">
+                            <div class="form-text" style="font-size: 0.7rem;">Jika diisi, tombol "Lihat Lokasi" akan muncul di halaman detail pelatihan milik User.</div>
                         </div>
                     </div>
 
@@ -189,25 +218,142 @@
                         <label class="form-label">Deskripsi / Fasilitas Singkat</label>
                         <textarea class="form-control" id="deskripsi" rows="2" placeholder="Tuliskan keunggulan lembaga di sini..."></textarea>
                     </div>
-                </div>
-                <div class="modal-footer border-top-0 px-4 pb-4">
-                    <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Batalkan</button>
-                    <button type="submit" class="btn btn-primary fw-bold px-4" id="btnSave">Simpan Data</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-footer border-top-0 px-4 pb-4">
+                <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Batalkan</button>
+                <button type="submit" class="btn btn-primary fw-bold px-4" id="btnSave">Simpan Data</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
 
 @push('scripts')
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
 <script>
     let tcModal;
+    // Map Variables
+    let map;
+    let marker;
+    let mapInitialized = false;
+    const defaultLat = -7.6500; // Pusat Magetan (Bisa disesuaikan)
+    const defaultLng = 111.3300;
 
     document.addEventListener('DOMContentLoaded', () => {
         tcModal = new bootstrap.Modal(document.getElementById('tcModal'));
+
+        // Pemicu perbaikan bug Leaflet size pada Bootstrap Modal
+        document.getElementById('tcModal').addEventListener('shown.bs.modal', function () {
+            if (!mapInitialized) {
+                initMap();
+                mapInitialized = true;
+            } else {
+                map.invalidateSize();
+            }
+        });
+
         loadData();
     });
+
+    // ==========================================
+    // LEAFLET MAP & NOMINATIM LOGIC
+    // ==========================================
+    function initMap() {
+        map = L.map('map').setView([defaultLat, defaultLng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        marker = L.marker([defaultLat, defaultLng], {draggable: true}).addTo(map);
+
+        // Update input saat marker digeser
+        marker.on('dragend', function(e) {
+            const position = marker.getLatLng();
+            const lat = position.lat.toFixed(6);
+            const lng = position.lng.toFixed(6);
+            updateMapFormBinding(lat, lng, true);
+        });
+
+        // Update marker saat peta diklik
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+            updateMapFormBinding(lat, lng, true);
+        });
+    }
+
+    function updateMapFormBinding(lat, lng, fetchAddress = false) {
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+
+        if (fetchAddress) {
+            reverseGeocode(lat, lng);
+        }
+    }
+
+    async function reverseGeocode(lat, lng) {
+        const addressTextarea = document.getElementById('alamat');
+
+        try {
+            // Tampilkan indikator loading di text area alamat
+            const oldText = addressTextarea.value;
+            addressTextarea.value = "Mencari alamat...";
+            addressTextarea.disabled = true;
+
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+            const data = await response.json();
+
+            if (data && data.address) {
+                addressTextarea.value = data.display_name || '';
+            } else {
+                addressTextarea.value = oldText; // Fallback jika tidak terdeteksi
+            }
+        } catch (error) {
+            console.warn('Reverse geocoding failed:', error);
+            addressTextarea.value = "";
+        } finally {
+            addressTextarea.disabled = false;
+        }
+    }
+
+    // Geolocation API Browser
+    document.getElementById('btnGetCurrentLocation').addEventListener('click', () => {
+        if (navigator.geolocation) {
+            const btn = document.getElementById('btnGetCurrentLocation');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Mencari...';
+            btn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    // Pindahkan Peta
+                    const newLatLng = new L.LatLng(lat, lng);
+                    marker.setLatLng(newLatLng);
+                    map.flyTo(newLatLng, 15);
+
+                    updateMapFormBinding(lat, lng, true);
+
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                },
+                (error) => {
+                    window.showAlert('error', 'Akses GPS Ditolak', 'Pastikan izin lokasi di browser telah aktif.');
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else {
+            window.showAlert('error', 'Tidak Didukung', 'Browser Anda tidak mendukung fitur ini.');
+        }
+    });
+    // ==========================================
 
     async function loadData() {
         const tbody = document.getElementById('tc-table-body');
@@ -263,10 +409,24 @@
     function showModal(mode) {
         document.getElementById('tcForm').reset();
 
+        const btnSave = document.getElementById('btnSave');
+        if (btnSave) {
+            btnSave.disabled = false;
+            btnSave.innerHTML = 'Simpan Data';
+        }
+
         if (mode === 'create') {
             document.getElementById('tcModalLabel').textContent = 'Tambah Training Center Baru';
             document.getElementById('tc_id').value = '';
             document.getElementById('status').value = 'active';
+            document.getElementById('google_maps_url').value = '';
+
+            // Reset Peta ke default
+            if (mapInitialized) {
+                const centerLatLng = new L.LatLng(defaultLat, defaultLng);
+                marker.setLatLng(centerLatLng);
+                map.setView(centerLatLng, 13);
+            }
         }
         tcModal.show();
     }
@@ -285,6 +445,19 @@
         document.getElementById('email').value = item.email || '';
         document.getElementById('website').value = item.website || '';
         document.getElementById('deskripsi').value = item.deskripsi || '';
+        document.getElementById('google_maps_url').value = item.google_maps_url || '';
+
+        // Pan Map ke koordinat yang sudah ada
+        if (mapInitialized && item.latitude && item.longitude) {
+            const itemLatLng = new L.LatLng(item.latitude, item.longitude);
+            marker.setLatLng(itemLatLng);
+            map.setView(itemLatLng, 15);
+        } else if (mapInitialized) {
+            // Pindah ke default jika edit TC yang belum punya koordinat
+            const centerLatLng = new L.LatLng(defaultLat, defaultLng);
+            marker.setLatLng(centerLatLng);
+            map.setView(centerLatLng, 13);
+        }
     }
 
     document.getElementById('tcForm').addEventListener('submit', async function(e) {
@@ -299,6 +472,7 @@
             alamat: document.getElementById('alamat').value,
             latitude: document.getElementById('latitude').value || null,
             longitude: document.getElementById('longitude').value || null,
+            google_maps_url: document.getElementById('google_maps_url').value || null,
             telepon: document.getElementById('telepon').value,
             email: document.getElementById('email').value || null,
             website: document.getElementById('website').value || null,
@@ -326,6 +500,7 @@
             tcModal.hide();
             window.showToast('success', 'Data berhasil disimpan!');
             loadData();
+            btnSave.disabled = false;
             btnSave.innerHTML = originalText;
         } catch (error) {
             window.showAlert('error', 'Gagal!', error.message);

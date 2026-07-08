@@ -274,6 +274,12 @@
             </div>
 
             <div class="modal-body p-4 p-md-5" style="background-color: var(--bg-color);">
+                <div id="btnMapsContainer" class="d-none text-center mb-4">
+                    <a href="#" target="_blank" id="btnOpenMaps" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="fas fa-map-pin me-1"></i> Lihat Lokasi (Google Maps)
+                    </a>
+                </div>
+
                 <div class="d-flex align-items-center mb-3 gap-2">
                     <i class="fas fa-book-open text-primary"></i>
                     <h6 class="fw-bold mb-0" style="color: var(--text-main);">Daftar Pelatihan Tersedia</h6>
@@ -291,7 +297,8 @@
 @push('scripts')
 <script>
     let rawRecommendations = [];
-    const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+    const detailModalElement = document.getElementById('detailModal');
+    const detailModal = new bootstrap.Modal(detailModalElement);
 
     document.addEventListener('DOMContentLoaded', async () => {
         await loadRecommendations();
@@ -370,6 +377,20 @@
         document.getElementById('modalTcAddress').innerHTML = `<i class="fas fa-map-marker-alt text-danger me-1"></i> ${tc.alamat}`;
         document.getElementById('modalTcScore').innerHTML = `<i class="fas fa-percentage me-1"></i> Kecocokan: ${item.score}%`;
         document.getElementById('modalTcDistance').innerHTML = item.distance ? `<i class="fas fa-location-arrow me-1"></i> Jarak: ${item.distance.toFixed(1)} km` : '<i class="fas fa-location-arrow me-1"></i> Jarak N/A';
+
+        // Logika Peta & Google Maps Button
+        const btnContainer = document.getElementById('btnMapsContainer');
+        const btnOpenMaps = document.getElementById('btnOpenMaps');
+
+        // Conditional Rendering
+        if (tc.google_maps_url) {
+            btnOpenMaps.href = tc.google_maps_url;
+            btnContainer.classList.remove('d-none');
+        } else {
+            // Jika kosong/null, sembunyikan sepenuhnya (Sesuai instruksi requirement baru)
+            btnOpenMaps.href = "#";
+            btnContainer.classList.add('d-none');
+        }
 
         const listContainer = document.getElementById('modalPelatihanList');
         listContainer.innerHTML = '';

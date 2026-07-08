@@ -28,6 +28,7 @@ class UpdateTrainingCenterRequest extends FormRequest
             'alamat' => 'sometimes|required|string',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'google_maps_url' => 'nullable|url',
             'telepon' => 'sometimes|required|string|max:20',
             'email' => 'nullable|email|max:255',
             'website' => 'nullable|url|max:255',

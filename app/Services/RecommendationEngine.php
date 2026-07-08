@@ -131,8 +131,11 @@ class RecommendationEngine
                     $tc->latitude, $tc->longitude
                 );
 
-                // Asumsi max jarak relevan 100km. Jika > 100km, skor 0. Jika 0km, skor penuh (20).
-                $maxDistance = 100;
+                // Gunakan jarak maksimal dari kuesioner user, fallback ke 100km jika kosong
+                $maxDistance = isset($answers['jarak_maksimal']) && is_numeric($answers['jarak_maksimal']) && $answers['jarak_maksimal'] > 0
+                    ? (float) $answers['jarak_maksimal']
+                    : 100;
+
                 $distScore = max(0, (1 - ($distanceKm / $maxDistance)) * 20);
                 $finalScore += $distScore;
             }

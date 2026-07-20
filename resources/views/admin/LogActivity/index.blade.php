@@ -59,8 +59,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card card-modern mb-4">
-            <div class="card-header d-flex w-100 justify-content-between align-items-center">
-                <h3 class="card-title fw-bold m-0 text-dark">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title fw-bold m-0 text-dark me-auto">
                     <i class="fas fa-shoe-prints text-muted me-2"></i> Jejak Aktivitas Pengguna
                 </h3>
                 <div class="d-flex gap-2">
@@ -262,15 +262,15 @@
                     const failures = results.filter(r => r.status === 'rejected' || !r.value.ok);
 
                     if(failures.length > 0) {
-                        window.showAlert('warning', 'Penghapusan Parsial', `Berhasil menghapus sebagian, namun ${failures.length} log gagal dihapus.`);
+                        window.showWarning('Penghapusan Parsial', `Berhasil menghapus sebagian, namun ${failures.length} log gagal dihapus.`);
                     } else {
-                        window.showToast('success', `${idsToDelete.length} Log berhasil dihapus`);
+                        window.showToast(`${idsToDelete.length} Log berhasil dihapus`, 'success');
                     }
 
                     // Reload
                     await loadData();
                 } catch (error) {
-                    window.showAlert('error', 'Gagal', 'Terjadi kesalahan sistem saat menghapus.');
+                    window.showError('Gagal', 'Terjadi kesalahan sistem saat menghapus.');
                 } finally {
                     btnDeleteBulk.disabled = false;
                     btnDeleteBulk.innerHTML = originalText;

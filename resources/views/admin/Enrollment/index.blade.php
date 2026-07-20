@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Data Pendaftaran')
-@section('page_title', 'Data Pendaftaran (Enrollments)')
+@section('page_title', 'Data Pendaftaran')
 
 @section('breadcrumb')
     <li class="breadcrumb-item active">Pendaftaran</li>
@@ -11,8 +11,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card mb-4">
-            <div class="card-header border-0 pb-0">
-                <h3 class="card-title fw-bold">Riwayat Pendaftaran User</h3>
+            <div class="card-header border-0 pb-3 d-flex justify-content-between align-items-center">
+                <h3 class="card-title fw-bold m-0 text-dark"><i class="fas fa-clipboard-list text-muted me-2"></i> Riwayat Pendaftaran User</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

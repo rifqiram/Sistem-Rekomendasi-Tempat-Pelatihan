@@ -241,3 +241,23 @@ Melalui audit arsitektur dan debugging lanjutan, beberapa bug kritis dan technic
      - Jika link G-Maps dimasukkan oleh admin, maka tombol **"Lihat Lokasi"** akan dirender, yang jika diklik akan melempar *user* membuka *App/Browser* Google Maps (*External Routing*).
      - Jika link G-Maps kosong, tombol tersebut dihancurkan sepenuhnya dari _DOM_ (bukan sekadar di-*disable*) sehingga menghasilkan UI panel Detail yang bersih dan elegan (Tanpa peta mini yang memberatkan memori perangkat *client*).
    - *Isolasi Sistem (Aman)*: Sifat tautan opsional eksternal ini berfungsi murni sebagai fitur navigasi sekunder (_Wayfinding UX_), sehingga integritas `Recommendation Engine` tetap aman 100% dan kalkulasi _Haversine Distance_ tidak dipengaruhi sama sekali.
+
+## 10. UI/UX Redesign & Enhancements (Terbaru)
+Aplikasi telah melalui proses audit dan redesain UI/UX secara menyeluruh untuk mencapai standar antarmuka modern (setara dengan Vercel, Linear, dan OpenDESA). 
+
+Perubahan yang dilakukan meliputi:
+
+*   **Identitas & Branding:** Pembaruan logo SRTP di seluruh halaman (Login Admin, Login User, Register, Navbar, dan Sidebar) dengan penyesuaian dimensi maksimal yang rapi tanpa merusak layout.
+*   **Card Header Admin:** Seluruh halaman Admin (Training Center, Pelatihan, User, Enrollment, LogActivity) di-*refactor* menggunakan Flexbox modern (`justify-content-between align-items-center`). Posisi judul selalu rata kiri dan tombol aksi utama rata kanan dengan hierarchy warna yang konsisten.
+*   **Autentikasi (Login & Register):** Halaman form perombakan total menjadi satu *Card Layout* di tengah dengan background bersih (`#F8FAFC`).
+    *   Penggunaan label mengambang di atas input dengan border-radius modern (8px) dan cincin fokus (*focus ring*) biru cerah.
+    *   Penggunaan *Divider* (garis pemisah) untuk memperjelas area header (Branding) dan form.
+    *   Animasi *fade-in* halus (`scale 0.98 -> 1`) pada saat form pertama dimuat.
+*   **SweetAlert Modern:** Sistem pop-up di-*refactor* secara global menggunakan *helper* tersentralisasi (`showSuccess`, `showError`, `showToast`, `showConfirm`, `showDelete`).
+    *   Semua notifikasi aksi sukses dipindahkan ke **Toast** (pojok kanan atas) murni, tanpa efek *background dimming* atau halangan layar (*no backdrop*).
+    *   Konfirmasi aksi kritis (seperti *Delete*) menggunakan *Modal Overlay* yang tidak hitam pekat, melainkan menggunakan efek *blur* transparan elegan (`backdrop-filter: blur(6px)`).
+    *   Desain *border-radius* SweetAlert dibuat lebih bulat (16px) dengan *box-shadow* premium, dan desain tombol `primary`, `secondary`, dan `danger` yang mengikuti *design system* aplikasi.
+*   **Sidebar Admin:** Warna latar belakang *sidebar* kiri diubah sepenuhnya menjadi putih (Light Theme) menggantikan *dark theme* bawaan AdminLTE. 
+    *   Tulisan pada menu dirubah menggunakan warna abu-abu gelap.
+    *   State *hover* menggunakan warna biru awan (`bg-sky-100` / `#e0f2fe`) dengan font kebiruan.
+    *   Tombol menu dibuat menjadi melayang membentuk "Pil" (dengan margin spasi antar pinggiran).

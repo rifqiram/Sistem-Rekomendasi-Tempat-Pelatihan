@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Manajemen Pengguna')
-@section('page_title', 'Data Pencari Kerja (Users)')
+@section('page_title', 'Data Pengguna')
 
 @section('breadcrumb')
     <li class="breadcrumb-item active">Users</li>
@@ -11,8 +11,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card mb-4">
-            <div class="card-header border-0 pb-0">
-                <h3 class="card-title fw-bold">Daftar Pengguna Sistem</h3>
+            <div class="card-header border-0 pb-3 d-flex justify-content-between align-items-center">
+                <h3 class="card-title fw-bold m-0 text-dark"><i class="fas fa-users text-muted me-2"></i> Daftar Pengguna Sistem</h3>
             </div>
             <div class="card-body">
                 <div id="alertBox" class="alert d-none"></div>

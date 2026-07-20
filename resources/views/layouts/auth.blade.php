@@ -18,6 +18,7 @@
 
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="{{ asset('css/sweetalert-modern.css') }}" rel="stylesheet">
 
     <style>
         :root {
@@ -75,42 +76,20 @@
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('js/utils/sweetalert.js') }}"></script>
 
     <!-- Global Utility Script for Auth Alerts -->
     <script>
-        window.showAlert = function(type, title, message) {
-            Swal.fire({
-                icon: type,
-                title: title,
-                text: message,
-                confirmButtonText: 'Mengerti',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'swal2-confirm'
-                }
-            });
-        };
+        
 
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
+        
 
-        window.showToast = function(type, title) {
-            Toast.fire({
-                icon: type,
-                title: title
-            });
-        };
+        
     </script>
 
     @stack('scripts')
+    @if(app()->isLocal() || config('app.debug'))
+        @include('components.ux-audit')
+    @endif
 </body>
 </html>

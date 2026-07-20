@@ -163,8 +163,8 @@
     <!-- Pendaftar Terbaru -->
     <div class="col-12">
         <div class="card border-0 shadow-sm" style="border-radius: 0.75rem;">
-            <div class="card-header bg-white border-0 py-3 d-flex w-100 justify-content-between align-items-center" style="border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem;">
-                <h3 class="card-title fw-bold mb-0 text-dark"><i class="fas fa-history text-muted me-2"></i> Pendaftar Terbaru</h3>
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center" style="border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem;">
+                <h3 class="card-title fw-bold mb-0 text-dark me-auto"><i class="fas fa-history text-muted me-2"></i> Pendaftar Terbaru</h3>
                 <a href="{{ route('admin.enrollments.index') }}" class="btn btn-sm btn-light border fw-semibold text-primary">
                     <i class="fas fa-external-link-alt me-1"></i> Lihat Semua
                 </a>
@@ -261,7 +261,7 @@
             console.error(error);
             const tbody = document.getElementById('recent-enrollments');
             tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-danger small"><i class="fas fa-exclamation-circle me-1"></i> Gagal memuat data</td></tr>`;
-            window.showToast('error', 'Gagal memuat statistik');
+            window.showToast('Gagal memuat statistik', 'error');
         }
     });
 </script>

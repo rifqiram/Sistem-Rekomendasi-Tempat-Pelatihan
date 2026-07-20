@@ -1,0 +1,220 @@
+/*
+ * Modern SweetAlert2 Minimalist Style
+ * Inspired by Vercel, Linear, shadcn/ui
+ */
+
+/* ------------------------
+   Global Variables & Reset
+------------------------ */
+:root {
+    --swal-bg: #FFFFFF;
+    --swal-border: #E5E7EB;
+    --swal-text: #111827;
+    --swal-text-muted: #6B7280;
+
+    --swal-primary: #3B82F6;
+    --swal-primary-hover: #2563EB;
+
+    --swal-danger: #EF4444;
+    --swal-danger-hover: #DC2626;
+
+    --swal-success: #22C55E;
+    --swal-warning: #F59E0B;
+
+    --swal-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ------------------------
+   Popup Container
+------------------------ */
+.modern-swal-popup {
+    background: var(--swal-bg) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--swal-shadow) !important;
+    padding: 24px 24px 20px 24px !important;
+    font-family: inherit !important;
+    width: 24em !important; /* Smaller, more elegant width */
+    max-width: 90% !important;
+    border: 1px solid var(--swal-border) !important;
+}
+
+/* ------------------------
+   Typography
+------------------------ */
+.modern-swal-title {
+    font-weight: 600 !important;
+    color: var(--swal-text) !important;
+    font-size: 1.125rem !important; /* 18px */
+    padding: 0 !important;
+    margin-bottom: 0.5rem !important;
+    margin-top: 0 !important;
+    text-align: center !important;
+}
+
+.modern-swal-text {
+    font-weight: 400 !important;
+    color: var(--swal-text-muted) !important;
+    font-size: 0.875rem !important; /* 14px */
+    line-height: 1.5 !important;
+    margin: 0 !important;
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+/* ------------------------
+   Icons
+------------------------ */
+.modern-swal-icon {
+    transform: scale(0.65) !important; /* Make it smaller */
+    margin: 0 auto 0.5rem auto !important;
+    border: none !important;
+}
+.modern-swal-icon.swal2-success { border-color: var(--swal-success) !important; color: var(--swal-success) !important; }
+.modern-swal-icon.swal2-error { border-color: var(--swal-danger) !important; color: var(--swal-danger) !important; }
+.modern-swal-icon.swal2-warning { border-color: var(--swal-warning) !important; color: var(--swal-warning) !important; }
+.modern-swal-icon.swal2-info { border-color: var(--swal-primary) !important; color: var(--swal-primary) !important; }
+
+/* Remove default circle borders on success/error if you want it ultra flat,
+   but keeping the default icon shape scaled down is usually enough. */
+
+/* ------------------------
+   Buttons
+------------------------ */
+.swal2-actions {
+    margin-top: 1.5rem !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.modern-swal-btn {
+    font-family: inherit !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    border-radius: 10px !important;
+    padding: 0.5rem 1.25rem !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    height: auto !important;
+    min-height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.modern-swal-btn:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px var(--swal-bg), 0 0 0 4px var(--swal-primary) !important;
+}
+
+/* Primary Button */
+.modern-swal-btn-primary {
+    background-color: var(--swal-primary) !important;
+    color: #fff !important;
+    border: 1px solid var(--swal-primary) !important;
+}
+.modern-swal-btn-primary:hover {
+    background-color: var(--swal-primary-hover) !important;
+    border-color: var(--swal-primary-hover) !important;
+}
+
+/* Secondary / Cancel Button */
+.modern-swal-btn-secondary {
+    background-color: transparent !important;
+    color: var(--swal-text-muted) !important;
+    border: 1px solid var(--swal-border) !important;
+}
+.modern-swal-btn-secondary:hover {
+    background-color: #F9FAFB !important;
+    color: var(--swal-text) !important;
+}
+
+/* Danger Button */
+.modern-swal-btn-danger {
+    background-color: var(--swal-danger) !important;
+    color: #fff !important;
+    border: 1px solid var(--swal-danger) !important;
+}
+.modern-swal-btn-danger:hover {
+    background-color: var(--swal-danger-hover) !important;
+    border-color: var(--swal-danger-hover) !important;
+}
+
+/* ------------------------
+   Toast Design
+------------------------ */
+.modern-swal-toast {
+    background: var(--swal-bg) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid var(--swal-border) !important;
+    padding: 12px 20px !important;
+    width: auto !important;
+    min-width: 250px !important;
+}
+
+.modern-swal-toast .swal2-title {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: var(--swal-text) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.modern-swal-toast .swal2-icon {
+    transform: scale(0.5) !important;
+    margin: 0 10px 0 0 !important;
+}
+
+.modern-swal-toast .swal2-timer-progress-bar {
+    background: var(--swal-primary) !important;
+    height: 3px !important;
+}
+
+/* ------------------------
+   Loading Design
+------------------------ */
+.modern-swal-loading .swal2-title {
+    margin-top: 15px !important;
+    font-size: 0.875rem !important;
+    color: var(--swal-text-muted) !important;
+    font-weight: 500 !important;
+}
+
+/* ------------------------
+   Backdrop & Animation
+------------------------ */
+/* Modern elegant overlay - Light blur, no heavy black */
+body.swal2-shown:not(.swal2-toast-shown) > [class^="swal2-container"] {
+    background: rgba(17, 24, 39, 0.08) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+}
+
+/* Ensure no overlay whatsoever for Toasts */
+body.swal2-toast-shown > [class^="swal2-container"] {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important; /* Let clicks pass through */
+}
+body.swal2-toast-shown > .swal2-container > .swal2-toast {
+    pointer-events: auto !important; /* Re-enable clicks only on the toast itself */
+}
+
+/* Override the aggressive dark backdrop completely */
+.swal2-backdrop-show {
+    background: transparent !important; 
+    backdrop-filter: none !important;
+}
+
+/* Smooth fade & scale in */
+.swal2-popup.swal2-show {
+    animation: modernSwalShow 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes modernSwalShow {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}

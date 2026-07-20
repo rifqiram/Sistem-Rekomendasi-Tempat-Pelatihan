@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('adminlte/css/adminlte.min.css') }}">
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="{{ asset('css/sweetalert-modern.css') }}" rel="stylesheet">
 
     <style>
         /* SRTP Admin Custom Theme Override */
@@ -23,13 +24,31 @@
             --bs-link-hover-color: #3730a3;
         }
 
-        .app-sidebar[data-bs-theme="dark"] {
-            background-color: #1e293b !important; /* Darker Slate for enterprise look */
+        
+
+                                .sidebar-brand {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            overflow: visible !important;
+        }
+        
+        .brand-link {
+            padding: 0.5rem 0.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            overflow: visible !important;
+        }
+        
+        .brand-text {
+            margin-left: -18px !important;
+            line-height: 1 !important;
         }
 
-        .sidebar-brand {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        /* Force bypass AdminLTE's strict max-height restriction on brand images */
+        .app-sidebar .brand-link .brand-image {
+            max-height: none !important;
         }
+        
+
 
         .nav-link.active {
             background-color: rgba(79, 70, 229, 0.9) !important;
@@ -50,30 +69,70 @@
             border-color: #4338ca;
         }
 
-        /* Global SweetAlert Modernization */
-        .swal2-popup {
-            border-radius: 1rem !important;
-            padding: 1.5rem !important;
+        /* SweetAlert styles moved to sweetalert-modern.css */
+            /* Override sidebar brand background and text color to white/black */
+        .app-sidebar .sidebar-brand {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #e5e7eb !important;
         }
-        .swal2-title {
-            font-size: 1.5rem !important;
+        
+        .app-sidebar .sidebar-brand .brand-text {
+            color: #111827 !important;
+        }
+        
+        /* Optional: Remove any dark shadow/glow on the brand link hover */
+        .app-sidebar .sidebar-brand a.brand-link:hover {
+            color: #111827 !important;
+        }
+            /* Modern White Sidebar Overrides */
+        .app-sidebar[data-bs-theme="light"] {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e5e7eb !important;
+        }
+
+        /* Sidebar Brand */
+        .app-sidebar .sidebar-brand {
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+        
+        .app-sidebar .sidebar-brand .brand-text {
+            color: #111827 !important;
             font-weight: 700 !important;
-            color: #1e293b !important;
         }
-        .swal2-html-container {
-            color: #64748b !important;
-            font-size: 0.95rem !important;
-        }
-        .swal2-confirm {
+
+        /* Sidebar Menu Links */
+        .app-sidebar .nav-sidebar .nav-link {
+            color: #4b5563 !important; /* gray-600 */
+            font-weight: 500;
             border-radius: 0.5rem !important;
-            font-weight: 600 !important;
-            padding: 0.6rem 1.5rem !important;
-            background-color: var(--bs-primary) !important;
+            margin: 0.15rem 0.75rem !important; /* Padding for the pill shape */
+            transition: all 0.2s ease;
         }
-        .swal2-cancel {
-            border-radius: 0.5rem !important;
-            font-weight: 600 !important;
-            padding: 0.6rem 1.5rem !important;
+        
+        /* Active State (Blue) - Keeps your previous blue override intact */
+        .app-sidebar .nav-sidebar .nav-link.active {
+            background-color: rgba(79, 70, 229, 0.9) !important; /* Primary Indigo */
+            color: #ffffff !important;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2) !important;
+        }
+        
+        .app-sidebar .nav-sidebar .nav-link.active i.nav-icon {
+            color: #ffffff !important;
+        }
+
+        /* Hover State (bg-sky-100 = #e0f2fe) */
+        .app-sidebar .nav-sidebar .nav-link:hover:not(.active) {
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important; /* sky-700 for text */
+        }
+        
+        /* Sidebar Headers */
+        .app-sidebar .nav-header {
+            color: #9ca3af !important; /* gray-400 */
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 1rem 1rem 0.5rem 1rem !important;
         }
     </style>
     @stack('styles')
@@ -129,11 +188,11 @@
         <!--end::Header-->
 
         <!--begin::Sidebar-->
-        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <aside class="app-sidebar bg-white shadow-sm" data-bs-theme="light">
             <!--begin::Sidebar Brand-->
             <div class="sidebar-brand">
                 <a href="{{ route('admin.dashboard') }}" class="brand-link">
-                    <i class="fas fa-bolt brand-image opacity-75" style="margin-left: .8rem; margin-right: .5rem; font-size: 1.5rem; color: #38bdf8;"></i>
+                    <img src="{{ asset('images/logoSRTP.png') }}" alt="Logo SRTP" class="brand-image shadow-sm" style="height: 90px !important; max-height: none !important; width: auto !important; object-fit: contain; border-radius: 4px; margin-top: -28px !important; margin-bottom: -28px !important; position: relative; z-index: 1050;">
                     <span class="brand-text fw-semibold">Admin SRTP</span>
                 </a>
             </div>
@@ -177,7 +236,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-header">TRANSAKSI</li>
+                        <li class="nav-header">RIWAYAT</li>
 
                         <li class="nav-item">
                             <a href="{{ route('admin.enrollments.index') }}" class="nav-link {{ request()->routeIs('admin.enrollments.index') ? 'active' : '' }}">
@@ -250,62 +309,17 @@
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('js/utils/sweetalert.js') }}"></script>
 
     <script>
         // Global SweetAlert Helpers
-        window.showAlert = function(type, title, message) {
-            Swal.fire({
-                icon: type,
-                title: title,
-                text: message,
-                confirmButtonText: 'Mengerti',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'btn btn-primary swal2-confirm'
-                }
-            });
-        };
+        
 
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
+        
 
-        window.showToast = function(type, title) {
-            Toast.fire({
-                icon: type,
-                title: title
-            });
-        };
+        
 
-        window.confirmAction = function(title, text, confirmText, callback) {
-            Swal.fire({
-                title: title,
-                text: text,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: confirmText || 'Ya, Lanjutkan',
-                cancelButtonText: 'Batal',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'btn btn-danger swal2-confirm me-2',
-                    cancelButton: 'btn btn-secondary swal2-cancel'
-                }
-            }).then((result) => {
-                if (result.isConfirmed && typeof callback === 'function') {
-                    callback();
-                }
-            });
-        };
+        
 
         document.addEventListener('DOMContentLoaded', () => {
             const user = window.getApiUser();
@@ -325,5 +339,8 @@
     </script>
 
     @stack('scripts')
+    @if(app()->isLocal() || config('app.debug'))
+        @include('components.ux-audit')
+    @endif
 </body>
 </html>

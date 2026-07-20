@@ -1,1 +1,0 @@
-- [Use new scoring system](use-new-scoring-system.md) — Follow AGENTS.md rule-based recommendation logic, avoid old skill matching

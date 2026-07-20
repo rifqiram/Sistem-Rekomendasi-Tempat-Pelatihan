@@ -307,7 +307,7 @@
         const jarak = document.getElementById('q_jarak').value;
 
         if (!bidang || !skillEl || !metodeEl || !jarak) {
-            window.showAlert('warning', 'Data Belum Lengkap', 'Mohon lengkapi semua pilihan kuesioner sebelum melanjutkan.');
+            window.showWarning('Data Belum Lengkap', 'Mohon lengkapi semua pilihan kuesioner sebelum melanjutkan.');
             return;
         }
 
@@ -339,7 +339,7 @@
 
         } catch (error) {
             overlay.classList.add('d-none');
-            window.showAlert('error', 'Gagal Memproses', error.message);
+            window.showError('Gagal Memproses', error.message);
         }
     });
 </script>

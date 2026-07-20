@@ -1,221 +1,277 @@
 @extends('layouts.auth')
 
-@section('title', 'Login User | SRTP')
+@section('title', 'Masuk | SRTP')
 
 @push('styles')
 <style>
+    body {
+        background-color: #F8FAFC;
+    }
+
     .auth-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         padding: 2rem;
     }
 
-    .auth-container {
-        width: 100%;
-        max-width: 420px;
-    }
-
-    .auth-brand {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 2rem;
-    }
-
-    .auth-brand .logo-box {
-        width: 42px;
-        height: 42px;
-        background: linear-gradient(135deg, var(--secondary-color, #10b981), #34d399);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 1.2rem;
-        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
-    }
-
-    .auth-brand .logo-name {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: var(--text-main);
-        letter-spacing: -0.5px;
-    }
-
     .auth-card {
-        background: var(--surface-color);
-        border: 1px solid var(--border-color, #e2e8f0);
-        border-radius: 1rem;
-        padding: 2.5rem 2rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        width: 100%;
+        max-width: 480px;
+        background: #FFFFFF;
+        border: none;
+        border-radius: 18px;
+        box-shadow: 0 12px 40px rgba(15,23,42,.10);
+        overflow: hidden;
+        animation: cardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transform: scale(0.98);
+        opacity: 0;
     }
 
-    .auth-card h2 {
-        font-size: 1.25rem;
+    @keyframes cardFadeIn {
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .auth-header {
+        padding: 32px 32px 0 32px;
+        text-align: center;
+    }
+
+        .auth-header img {
+        height: auto;
+        width: 200px;
+        object-fit: contain;
+        margin-bottom: 12px;
+    }
+
+    .auth-header h2 {
+        font-size: 28px;
         font-weight: 700;
-        color: var(--text-main);
-        margin: 0 0 0.5rem;
-        text-align: center;
+        color: #111827;
+        margin: 0 0 24px 0;
+        line-height: 1.4;
     }
 
-    .auth-card .subtitle {
-        font-size: 0.9rem;
-        color: var(--text-muted);
+    .divider {
+        height: 1px;
+        background-color: #E2E8F0;
+        margin: 24px 32px;
+    }
+
+    .auth-body {
+        padding: 0 32px;
+    }
+
+    .auth-body .login-title {
+        font-size: 26px;
+        font-weight: 600;
+        color: #111827;
         text-align: center;
-        margin: 0 0 2rem;
+        margin: 0 0 30px 0;
     }
 
     .form-group {
-        margin-bottom: 1.25rem;
+        margin-bottom: 20px;
     }
 
-    .form-label-row {
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 48px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: 1px solid #CBD5E1;
+        font-size: 0.95rem;
+        color: #111827;
+        background-color: #FFFFFF;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .auth-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .remember-me {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
+        gap: 8px;
     }
 
-    .form-label-row label {
-        font-size: 0.85rem;
+    .remember-me input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1px solid #CBD5E1;
+        accent-color: #3B82F6;
+        cursor: pointer;
+    }
+
+    .remember-me label {
+        font-size: 0.875rem;
+        color: #475569;
+        font-weight: 500;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .forgot-password {
+        font-size: 0.875rem;
         font-weight: 600;
-        color: var(--text-main);
-    }
-
-    .input-with-icon {
-        position: relative;
-    }
-
-    .input-with-icon .form-control {
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
-        border-radius: 0.5rem;
-        border-color: #cbd5e1;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-    }
-
-    .input-with-icon .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-    }
-
-    .input-with-icon .field-icon {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94a3b8;
-        font-size: 1rem;
-        pointer-events: none;
+        color: #3B82F6;
+        text-decoration: none;
         transition: color 0.2s;
     }
 
-    .input-with-icon .form-control:focus + .field-icon,
-    .input-with-icon .form-control:not(:placeholder-shown) + .field-icon {
-        color: var(--primary-color);
+    .forgot-password:hover {
+        color: #2563EB;
+        text-decoration: underline;
     }
 
     .auth-submit-btn {
         width: 100%;
-        padding: 0.875rem;
-        background: var(--primary-color);
-        color: #fff;
+        height: 48px;
+        background: #3B82F6;
+        color: #FFFFFF;
         border: none;
-        border-radius: 0.5rem;
-        font-size: 0.95rem;
+        border-radius: 10px;
+        font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
-        margin-top: 1.5rem;
     }
 
     .auth-submit-btn:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.3);
+        background: #2563EB;
     }
 
-    .auth-submit-btn:active {
-        transform: none;
+    .auth-submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
     }
 
-    .auth-divider {
-        height: 1px;
-        background: #f1f5f9;
-        margin: 1.5rem 0;
-    }
-
-    .auth-link {
+    .register-link {
         display: block;
         text-align: center;
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: color 0.2s;
+        margin-top: 20px;
+        font-size: 0.875rem;
+        color: #6B7280;
     }
 
-    .auth-link:hover {
-        color: var(--primary-hover);
+    .register-link a {
+        color: #3B82F6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .register-link a:hover {
         text-decoration: underline;
+    }
+
+    .auth-footer {
+        padding: 0 32px 20px 32px;
+        text-align: center;
+    }
+
+    .auth-footer p {
+        margin: 0;
+        font-size: 12px;
+        color: #94A3B8;
+    }
+
+    /* Tablet & Mobile Responsiveness */
+    @media (max-width: 640px) {
+        .auth-wrapper {
+            padding: 1rem;
+        }
+        .auth-header {
+            padding: 24px 24px 0 24px;
+        }
+        .auth-body {
+            padding: 0 24px;
+        }
+        .auth-footer {
+            padding: 0 24px 20px 24px;
+        }
+        .divider {
+            margin: 24px;
+        }
     }
 </style>
 @endpush
 
 @section('content')
 <div class="auth-wrapper">
-    <div class="auth-container">
-        {{-- Brand --}}
-        <div class="auth-brand">
-            <div class="logo-box"><i class="fas fa-user-graduate"></i></div>
-            <span class="logo-name">Portal Siswa</span>
+    <div class="auth-card">
+
+                <div class="auth-header">
+            <img src="{{ asset('images/logoSRTP.png') }}" alt="Logo SRTP">
+            <h2>Kabupaten Magetan</h2>
         </div>
 
-        <div class="auth-card">
-            <h2>Masuk ke Akun Anda</h2>
-            <p class="subtitle">Gunakan email dan password Anda untuk melanjutkan pencarian pelatihan.</p>
+        <div class="divider"></div>
+
+        <div class="auth-body">
+            <h3 class="login-title">Halaman Login</h3>
 
             <form id="userLoginForm">
                 <div class="form-group">
-                    <div class="form-label-row">
-                        <label for="email">Alamat Email</label>
-                    </div>
-                    <div class="input-with-icon">
-                        <input type="email" id="email" class="form-control" placeholder="Masukkan alamat email" required>
-                        <span class="field-icon"><i class="fas fa-envelope"></i></span>
-                    </div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" required>
                 </div>
 
                 <div class="form-group">
-                    <div class="form-label-row">
-                        <label for="password">Password</label>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+
+                <div class="auth-actions">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Ingat Saya</label>
                     </div>
-                    <div class="input-with-icon">
-                        <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
-                        <span class="field-icon"><i class="fas fa-lock"></i></span>
-                    </div>
+                    <!-- Placeholder link -->
+                    <a href="#" class="forgot-password" onclick="event.preventDefault(); window.showToast('Fitur Lupa Password segera hadir', 'info');">Lupa Password?</a>
                 </div>
 
                 <button type="submit" class="auth-submit-btn" id="loginSubmit">
-                    <i class="fas fa-sign-in-alt"></i> Masuk Sekarang
+                    Masuk
                 </button>
+
+                <div class="register-link">
+                    Belum punya akun? <a href="{{ route('user.register') }}">Daftar di sini</a>
+                </div>
             </form>
-
-            <div class="auth-divider"></div>
-
-            <a href="{{ route('user.register') }}" class="auth-link">
-                Belum punya akun? <span style="text-decoration: underline;">Daftar di sini</span>
-            </a>
         </div>
+
+        <div class="divider"></div>
+
+        <div class="auth-footer">
+            <p>&copy; 2026 Sistem Rekomendasi Tempat Pelatihan</p>
+        </div>
+
     </div>
 </div>
 @endsection
@@ -247,7 +303,6 @@
             const payload = await response.json();
             const userData = payload.data?.user ?? payload.user;
             setApiUser(userData);
-            // Modified: Force regular users to check their profile/questionnaire status first
             window.location.href = userData.role === 'admin' ? '/admin/dashboard' : '/user/profile';
         } catch (error) {
             // ignore
@@ -261,7 +316,7 @@
 
         const originalText = loginSubmit.innerHTML;
         loginSubmit.disabled = true;
-        loginSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+        loginSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Memproses...';
 
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
@@ -278,25 +333,24 @@
 
             if (!response.ok) {
                 const error = await response.json();
-                window.showAlert('error', 'Login Gagal', error.message || 'Periksa kembali email dan password Anda.');
+                window.showError('Login Gagal', error.message || 'Periksa kembali email dan password Anda.');
                 return;
             }
 
             const payload = await response.json();
             const data = payload.data ?? payload;
 
-            window.showToast('success', 'Berhasil masuk');
+            window.showToast('Berhasil masuk', 'success');
 
             setApiToken(data.token);
             setApiUser(data.user);
 
             setTimeout(() => {
-                // Modified: Force regular users to check their profile/questionnaire status first
                 window.location.href = data.user.role === 'admin' ? '/admin/dashboard' : '/user/profile';
             }, 800);
 
         } catch (error) {
-            window.showAlert('error', 'Koneksi Terputus', 'Terjadi kesalahan jaringan. Silakan coba beberapa saat lagi.');
+            window.showError('Koneksi Terputus', 'Terjadi kesalahan jaringan. Silakan coba beberapa saat lagi.');
         } finally {
             if(!loginSubmit.disabled || loginSubmit.innerHTML.includes('Memproses')) {
                 loginSubmit.disabled = false;

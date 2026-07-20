@@ -18,6 +18,7 @@
 
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="{{ asset('css/sweetalert-modern.css') }}" rel="stylesheet">
 
     <style>
         /* CSS Variables Global - Enterprise Standard */
@@ -73,11 +74,7 @@
             gap: 8px;
         }
 
-        .navbar-brand i {
-            background: linear-gradient(135deg, var(--warning-color), #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        
 
         /* Modern Nav Links */
         .nav-link {
@@ -168,38 +165,7 @@
             font-weight: 500;
         }
 
-        /* Global SweetAlert Modernization */
-        .swal2-popup {
-            border-radius: 1rem !important;
-            padding: 1.5rem !important;
-        }
-        .swal2-title {
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-            font-size: 1.5rem !important;
-            font-weight: 700 !important;
-            color: var(--text-main) !important;
-        }
-        .swal2-html-container {
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-            color: var(--text-muted) !important;
-            font-size: 0.95rem !important;
-        }
-        .swal2-confirm {
-            border-radius: 0.5rem !important;
-            font-weight: 600 !important;
-            padding: 0.75rem 2rem !important;
-            background-color: var(--primary-color) !important;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2) !important;
-        }
-        .swal2-confirm:hover {
-            background-color: var(--primary-hover) !important;
-        }
-        .swal2-cancel {
-            border-radius: 0.5rem !important;
-            font-weight: 600 !important;
-            padding: 0.75rem 2rem !important;
-            background-color: #64748b !important;
-        }
+        /* SweetAlert styles moved to sweetalert-modern.css */
     </style>
 
     @stack('styles')
@@ -208,8 +174,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-glass sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('user.dashboard') }}">
-                <i class="fas fa-bolt"></i> SRTP
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('user.dashboard') }}">
+                <img src="{{ asset('images/logoSRTP.png') }}" alt="Logo SRTP" style="height: 120px; width: auto; object-fit: contain; margin-top: -35px; margin-bottom: -35px; margin-right: 10px; position: relative; z-index: 1050;">
             </a>
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#userNavbar">
                 <span class="navbar-toggler-icon"></span>
@@ -241,7 +207,7 @@
                             </div>
                             <div class="d-flex flex-column me-2">
                                 <span id="user-name" class="fw-bold" style="font-size: 0.9rem; line-height: 1.2;">Pengguna</span>
-                                <span class="text-muted" style="font-size: 0.75rem;" id="user-role-label">Siswa</span>
+                                <span class="text-muted" style="font-size: 0.75rem;" id="user-role-label">Pengguna</span>
                             </div>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end mt-2 animate slideIn">
@@ -280,62 +246,17 @@
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('js/utils/sweetalert.js') }}"></script>
 
     <script>
         // Global SweetAlert Helpers
-        window.showAlert = function(type, title, message) {
-            Swal.fire({
-                icon: type,
-                title: title,
-                text: message,
-                confirmButtonText: 'Mengerti',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'swal2-confirm border-0 text-white'
-                }
-            });
-        };
+        
 
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
+        
 
-        window.showToast = function(type, title) {
-            Toast.fire({
-                icon: type,
-                title: title
-            });
-        };
+        
 
-        window.confirmAction = function(title, text, confirmText, callback) {
-            Swal.fire({
-                title: title,
-                text: text,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: 'var(--primary-color)',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: confirmText || 'Ya, Lanjutkan',
-                cancelButtonText: 'Batal',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'swal2-confirm border-0 text-white me-2',
-                    cancelButton: 'swal2-cancel border-0 text-white'
-                }
-            }).then((result) => {
-                if (result.isConfirmed && typeof callback === 'function') {
-                    callback();
-                }
-            });
-        };
+        
 
         document.addEventListener('DOMContentLoaded', () => {
             const user = window.getApiUser();
@@ -367,5 +288,8 @@
     </script>
 
     @stack('scripts')
+    @if(app()->isLocal() || config('app.debug'))
+        @include('components.ux-audit')
+    @endif
 </body>
 </html>

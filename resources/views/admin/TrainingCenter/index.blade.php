@@ -100,10 +100,10 @@
 <div class="row">
     <div class="col-12">
         <div class="card card-modern mb-4">
-            <div class="card-header d-flex w-100 justify-content-between align-items-center">
-                <h3 class="card-title fw-bold m-0 text-dark"><i class="fas fa-building text-muted me-2"></i> Daftar Tempat Pelatihan</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title fw-bold m-0 text-dark me-auto"><i class="fas fa-building text-muted me-2"></i> Daftar Tempat Pelatihan</h3>
                 <button type="button" class="btn btn-primary btn-sm px-3 fw-semibold rounded-pill shadow-sm" onclick="showModal('create')">
-                    <i class="fas fa-plus me-1"></i> Tambah TC
+                    <i class="fas fa-plus me-1"></i> Tambah Training Center
                 </button>
             </div>
             <div class="card-body p-0">
@@ -343,14 +343,14 @@
                     btn.disabled = false;
                 },
                 (error) => {
-                    window.showAlert('error', 'Akses GPS Ditolak', 'Pastikan izin lokasi di browser telah aktif.');
+                    window.showError('Akses GPS Ditolak', 'Pastikan izin lokasi di browser telah aktif.');
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
         } else {
-            window.showAlert('error', 'Tidak Didukung', 'Browser Anda tidak mendukung fitur ini.');
+            window.showError('Tidak Didukung', 'Browser Anda tidak mendukung fitur ini.');
         }
     });
     // ==========================================
@@ -498,12 +498,12 @@
             }
 
             tcModal.hide();
-            window.showToast('success', 'Data berhasil disimpan!');
+            window.showToast('Data berhasil disimpan!', 'success');
             loadData();
             btnSave.disabled = false;
             btnSave.innerHTML = originalText;
         } catch (error) {
-            window.showAlert('error', 'Gagal!', error.message);
+            window.showError('Gagal!', error.message);
             btnSave.disabled = false;
             btnSave.innerHTML = 'Simpan Data';
         }
@@ -525,10 +525,10 @@
                         throw new Error(resData.message || 'Gagal menghapus');
                     }
 
-                    window.showToast('success', 'Lembaga berhasil dihapus');
+                    window.showToast('Lembaga berhasil dihapus', 'success');
                     loadData();
                 } catch (error) {
-                    window.showAlert('error', 'Gagal', error.message);
+                    window.showError('Gagal', error.message);
                 }
             }
         );

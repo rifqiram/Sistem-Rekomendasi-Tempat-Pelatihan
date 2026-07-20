@@ -90,8 +90,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card card-modern mb-4">
-            <div class="card-header d-flex w-100 justify-content-between align-items-center">
-                <h3 class="card-title fw-bold m-0 text-dark"><i class="fas fa-book-open text-muted me-2"></i> Daftar Pelatihan Teknis</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title fw-bold m-0 text-dark me-auto"><i class="fas fa-book-open text-muted me-2"></i> Daftar Pelatihan Teknis</h3>
                 <button type="button" class="btn btn-primary btn-sm px-3 fw-semibold rounded-pill shadow-sm" onclick="showModal('create')">
                     <i class="fas fa-plus me-1"></i> Tambah Pelatihan
                 </button>
@@ -403,12 +403,12 @@
             }
 
             pelatihanModal.hide();
-            window.showToast('success', 'Data pelatihan berhasil disimpan!');
+            window.showToast('Data pelatihan berhasil disimpan!', 'success');
             loadData();
             btnSave.disabled = false;
             btnSave.innerHTML = originalText;
         } catch (error) {
-            window.showAlert('error', 'Gagal!', error.message);
+            window.showError('Gagal!', error.message);
             btnSave.disabled = false;
             btnSave.innerHTML = 'Simpan Pelatihan';
         }
@@ -430,10 +430,10 @@
                         throw new Error(resData.message || 'Gagal menghapus');
                     }
 
-                    window.showToast('success', 'Pelatihan berhasil dihapus');
+                    window.showToast('Pelatihan berhasil dihapus', 'success');
                     loadData();
                 } catch (error) {
-                    window.showAlert('error', 'Gagal', error.message);
+                    window.showError('Gagal', error.message);
                 }
             }
         );

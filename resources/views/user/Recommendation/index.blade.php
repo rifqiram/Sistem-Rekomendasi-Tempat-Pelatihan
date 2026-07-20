@@ -461,13 +461,13 @@
                     btn.style.backgroundColor = 'var(--secondary-color)';
                     btn.style.borderColor = 'var(--secondary-color)';
 
-                    window.showToast('success', 'Berhasil mendaftar!');
+                    window.showToast('Berhasil mendaftar!', 'success');
                     setTimeout(() => {
                         detailModal.hide(); // auto close modal
                     }, 1000);
 
                 } catch (error) {
-                    window.showAlert('error', 'Gagal', error.message);
+                    window.showError('Gagal', error.message);
                     btn.disabled = false;
                     btn.style.opacity = '1';
                     btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Daftar';

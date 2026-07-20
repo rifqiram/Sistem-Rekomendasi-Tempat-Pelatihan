@@ -1,214 +1,274 @@
 @extends('layouts.auth')
 
-@section('title', 'Daftar User | SRTP')
+@section('title', 'Daftar Akun | SRTP')
 
-@section('content')
+@push('styles')
 <style>
+    body {
+        background-color: #F8FAFC;
+    }
+
     .auth-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 16px;
+        padding: 2rem;
     }
+
     .auth-card {
         width: 100%;
-        max-width: 460px;
-        padding: 32px 28px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        max-width: 480px; /* Slightly wider than login for the 2-column layout or just general comfort with more fields */
+        background: #FFFFFF;
+        border: none;
+        border-radius: 18px;
+        box-shadow: 0 12px 40px rgba(15,23,42,.10);
+        overflow: hidden;
+        animation: cardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transform: scale(0.98);
+        opacity: 0;
     }
-    .auth-card h2 {
-        margin-bottom: 6px;
-        font-size: 22px;
-        letter-spacing: -0.3px;
+
+    @keyframes cardFadeIn {
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .auth-header {
+        padding: 28px 28px 0 28px;
+        text-align: center;
+    }
+
+    .auth-header img {
+        height: auto;
+        width: 200px;
+        object-fit: contain;
+        margin-bottom: 12px;
+    }
+
+    .auth-header h2 {
+        font-size: 28px;
         font-weight: 700;
         color: #111827;
+        margin: 0 0 24px 0;
+        line-height: 1.4;
     }
-    .auth-card .subtitle {
-        margin-bottom: 24px;
-        color: #6b7280;
-        font-size: 13.5px;
-        line-height: 1.5;
+
+    .divider {
+        height: 1px;
+        background-color: #E2E8F0;
+        margin: 24px 28px;
     }
-    .auth-card .form-group { margin-bottom: 18px; }
-    .auth-card .form-group label {
+
+    .auth-body {
+        padding: 0 28px;
+    }
+
+    .auth-body .login-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #111827;
+        text-align: center;
+        margin: 0 0 30px 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
         display: block;
-        margin-bottom: 6px;
-        font-size: 13px;
+        font-size: 0.875rem;
         font-weight: 600;
         color: #374151;
+        margin-bottom: 8px;
     }
-    .auth-card .form-group label .required { color: #ef4444; margin-left: 2px; }
-    .auth-card .form-control {
+
+    .form-group label .required {
+        color: #EF4444;
+        margin-left: 2px;
+    }
+
+    .form-control {
         width: 100%;
-        padding: 12px 14px;
-        font-size: 14px;
-        border: 1.5px solid #d1d5db;
-        border-radius: 6px;
-        transition: border-color 0.15s, box-shadow 0.15s;
-        outline: none;
-        font-family: inherit;
-        background: #fff;
+        height: 48px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: 1px solid #CBD5E1;
+        font-size: 0.95rem;
         color: #111827;
+        background-color: #FFFFFF;
+        transition: all 0.2s ease;
     }
-    .auth-card .form-control:focus {
-        border-color: #4f46e5;
-        box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     }
-    .auth-card .form-control.is-invalid {
-        border-color: #ef4444;
-        box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
+
+    .form-control.is-invalid {
+        border-color: #EF4444;
     }
-    .auth-card .form-control::placeholder { color: #9ca3af; font-size: 13px; }
+
+    .form-control.is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
 
     .field-hint {
         display: block;
-        margin-top: 4px;
+        margin-top: 6px;
         font-size: 12px;
-        color: #6b7280;
+        color: #6B7280;
     }
+
     .field-error {
         display: none;
-        margin-top: 4px;
+        margin-top: 6px;
         font-size: 12.5px;
-        color: #ef4444;
+        color: #EF4444;
         font-weight: 500;
     }
-    .field-error.show { display: block; }
+
+    .field-error.show {
+        display: block;
+    }
 
     .auth-submit-btn {
         width: 100%;
-        padding: 13px;
+        height: 48px;
+        background: #3B82F6;
+        color: #FFFFFF;
         border: none;
-        border-radius: 6px;
-        background: #4f46e5;
-        color: #fff;
+        border-radius: 10px;
+        font-size: 1rem;
         font-weight: 600;
-        font-size: 14px;
         cursor: pointer;
-        transition: background 0.15s ease, transform 0.1s;
-        font-family: inherit;
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
+        margin-top: 10px;
     }
-    .auth-submit-btn:hover { background: #4338ca; }
-    .auth-submit-btn:active { transform: scale(0.98); }
+
+    .auth-submit-btn:hover {
+        background: #2563EB;
+    }
+
     .auth-submit-btn:disabled {
         opacity: 0.7;
         cursor: not-allowed;
     }
-    .auth-submit-btn .spinner {
-        width: 16px; height: 16px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .auth-link {
+    .register-link {
         display: block;
-        margin-top: 20px;
         text-align: center;
-        color: #4f46e5;
-        font-size: 13.5px;
-        font-weight: 500;
+        margin-top: 20px;
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+
+    .register-link a {
+        color: #3B82F6;
+        font-weight: 600;
         text-decoration: none;
     }
-    .auth-link:hover { text-decoration: underline; }
 
-    .alert {
-        padding: 12px 16px;
-        border-radius: 6px;
-        font-size: 13.5px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 18px;
-    }
-    .alert-danger {
-        background: #fef2f2;
-        border: 1px solid #fca5a5;
-        color: #b91c1c;
-    }
-    .alert-success {
-        background: #ecfdf5;
-        border: 1px solid #6ee7b7;
-        color: #065f46;
+    .register-link a:hover {
+        text-decoration: underline;
     }
 
-    .form-helper {
-        margin-top: 6px;
-        padding: 10px 14px;
-        background: #f9fafb;
-        border-radius: 6px;
-        font-size: 12px;
-        color: #6b7280;
-        line-height: 1.5;
-    }
-
-    .privacy-note {
-        margin-top: 16px;
+    .auth-footer {
+        padding: 0 28px 20px 28px;
         text-align: center;
-        font-size: 11.5px;
-        color: #9ca3af;
-        line-height: 1.5;
+    }
+
+    .auth-footer p {
+        margin: 0;
+        font-size: 12px;
+        color: #94A3B8;
+    }
+
+    @media (max-width: 640px) {
+        .auth-wrapper {
+            padding: 1rem;
+        }
+        .auth-header {
+            padding: 24px 24px 0 24px;
+        }
+        .auth-body {
+            padding: 0 24px;
+        }
+        .auth-footer {
+            padding: 0 24px 20px 24px;
+        }
+        .divider {
+            margin: 24px;
+        }
     }
 </style>
+@endpush
 
+@section('content')
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h2>Daftar Pengguna</h2>
-        <p class="subtitle">Buat akun baru untuk mengakses layanan pelatihan dan rekomendasi keahlian.</p>
 
-        <div id="registerAlert" class="alert alert-danger d-none">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="registerAlertText"></span>
+        <div class="auth-header">
+            <img src="{{ asset('images/logoSRTP.png') }}" alt="Logo SRTP">
+            <h2>Kabupaten Magetan</h2>
         </div>
 
-        <form id="userRegisterForm" novalidate>
-            <p style="margin-bottom: 18px; font-size: 12.5px; color: var(--color-text-secondary);">
-                <i class="fas fa-info-circle" style="color: var(--color-primary);"></i>
-                Isi data dengan benar agar pendaftaran diproses cepat.
-            </p>
+        <div class="divider"></div>
 
-            <div class="form-group">
-                <label for="name">Nama Lengkap <span class="required">*</span></label>
-                <input type="text" id="name" class="form-control" placeholder="cth: Budi Santoso" required autofocus maxlength="255">
-                <small class="field-hint">Sesuai KTP / nama yang biasa digunakan</small>
-                <small class="field-error" id="nameError"></small>
-            </div>
-            <div class="form-group">
-                <label for="email">Alamat Email <span class="required">*</span></label>
-                <input type="email" id="email" class="form-control" placeholder="cth: nama@domain.com" required>
-                <small class="field-hint">Akan digunakan untuk login ke sistem</small>
-                <small class="field-error" id="emailError"></small>
-            </div>
-            <div class="form-group">
-                <label for="password">Password <span class="required">*</span></label>
-                <input type="password" id="password" class="form-control" placeholder="Minimal 8 karakter" required minlength="8">
-                <small class="field-hint">Gunakan kombinasi huruf dan angka untuk keamanan</small>
-                <small class="field-error" id="passwordError"></small>
-            </div>
-            <div class="form-group">
-                <label for="passwordConfirmation">Ulangi Password <span class="required">*</span></label>
-                <input type="password" id="passwordConfirmation" class="form-control" placeholder="Ketik ulang password" required>
-                <small class="field-hint">Harus sama dengan password di atas</small>
-                <small class="field-error" id="passwordConfirmationError"></small>
-            </div>
+        <div class="auth-body">
+            <h3 class="login-title">Daftar Akun Baru</h3>
 
-            <button type="submit" class="auth-submit-btn" id="registerSubmit">
-                <span id="registerBtnText">Daftar</span>
-            </button>
-        </form>
+            <form id="userRegisterForm" novalidate>
+                <div class="form-group">
+                    <label for="name">Nama Lengkap <span class="required">*</span></label>
+                    <input type="text" id="name" class="form-control" required autofocus maxlength="255">
+                    <small class="field-hint">Sesuai KTP atau nama asli Anda</small>
+                    <small class="field-error" id="nameError"></small>
+                </div>
 
-        <a href="{{ route('user.login') }}" class="auth-link">Sudah punya akun? Masuk disini</a>
-        <p class="privacy-note">Data Anda digunakan hanya untuk kebutuhan pendaftaran dan akses pelatihan.</p>
+                <div class="form-group">
+                    <label for="email">Alamat Email <span class="required">*</span></label>
+                    <input type="email" id="email" class="form-control" required>
+                    <small class="field-error" id="emailError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password <span class="required">*</span></label>
+                    <input type="password" id="password" class="form-control" required minlength="8">
+                    <small class="field-hint">Minimal 8 karakter</small>
+                    <small class="field-error" id="passwordError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordConfirmation">Ulangi Password <span class="required">*</span></label>
+                    <input type="password" id="passwordConfirmation" class="form-control" required>
+                    <small class="field-error" id="passwordConfirmationError"></small>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="registerSubmit">
+                    Daftar Sekarang
+                </button>
+
+                <div class="register-link">
+                    Sudah punya akun? <a href="{{ route('user.login') }}">Masuk di sini</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="auth-footer">
+            <p>&copy; 2026 Sistem Rekomendasi Tempat Pelatihan</p>
+        </div>
+
     </div>
 </div>
 @endsection
@@ -216,10 +276,7 @@
 @push('scripts')
 <script>
     const registerForm = document.getElementById('userRegisterForm');
-    const registerAlert = document.getElementById('registerAlert');
-    const registerAlertText = document.getElementById('registerAlertText');
     const registerSubmit = document.getElementById('registerSubmit');
-    const registerBtnText = document.getElementById('registerBtnText');
 
     function showFieldError(fieldId, message) {
         const input = document.getElementById(fieldId);
@@ -239,23 +296,6 @@
     function focusFirstError() {
         const first = document.querySelector('.form-control.is-invalid');
         if (first) first.focus();
-    }
-
-    function showAlert(message, type) {
-        registerAlertText.textContent = message;
-        registerAlert.className = 'alert alert-' + (type || 'danger');
-        registerAlert.classList.remove('d-none');
-    }
-
-    function setLoading(isLoading) {
-        registerSubmit.disabled = isLoading;
-        registerBtnText.textContent = isLoading ? 'Memproses...' : 'Daftar';
-        if (isLoading) {
-            registerBtnText.insertAdjacentHTML('beforebegin', '<span class="spinner" id="registerSpinner"></span>');
-        } else {
-            const spinner = document.getElementById('registerSpinner');
-            if (spinner) spinner.remove();
-        }
     }
 
     function validateForm() {
@@ -321,9 +361,9 @@
             });
             if (!response.ok) return;
             const payload = await response.json();
-            const user = payload.data?.user ?? payload.user;
-            setApiUser(user);
-            window.location.href = user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+            const userData = payload.data?.user ?? payload.user;
+            setApiUser(userData);
+            window.location.href = userData.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
         } catch (error) {}
     }
 
@@ -331,11 +371,12 @@
 
     registerForm.addEventListener('submit', async function (event) {
         event.preventDefault();
-        registerAlert.classList.add('d-none');
 
         if (!validateForm()) return;
 
-        setLoading(true);
+        const originalText = registerSubmit.innerHTML;
+        registerSubmit.disabled = true;
+        registerSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Memproses...';
 
         const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -361,32 +402,41 @@
                 const error = await response.json();
                 clearFieldErrors();
 
-                // Handle field-level errors from Laravel validation
                 if (error.errors) {
                     Object.keys(error.errors).forEach(field => {
                         const messages = Array.isArray(error.errors[field]) ? error.errors[field] : [error.errors[field]];
                         showFieldError(field, messages[0]);
                     });
                     focusFirstError();
+                    return;
                 }
 
-                showAlert(error.message || 'Pendaftaran gagal. Periksa kembali input Anda.', 'danger');
+                window.showError('Pendaftaran Gagal', error.message || 'Periksa kembali input Anda.');
                 return;
             }
 
             const payload = await response.json();
             const data = payload.data ?? payload;
+
+            window.showToast('Berhasil mendaftar', 'success');
+
             setApiToken(data.token);
             setApiUser(data.user);
-            window.location.href = '/user/profile'; // Redirect to Profile/Questionnaire for Onboarding
+
+            setTimeout(() => {
+                window.location.href = '/user/profile';
+            }, 800);
+
         } catch (error) {
-            showAlert('Terjadi kesalahan jaringan. Coba ulangi.', 'danger');
+            window.showError('Terjadi Kesalahan', 'Gagal terhubung ke server. Coba beberapa saat lagi.');
         } finally {
-            setLoading(false);
+            if(!registerSubmit.disabled || registerSubmit.innerHTML.includes('Memproses')) {
+                registerSubmit.disabled = false;
+                registerSubmit.innerHTML = originalText;
+            }
         }
     });
 
-    // Clear field error on input
     document.querySelectorAll('.form-control').forEach(input => {
         input.addEventListener('input', function () {
             this.classList.remove('is-invalid');

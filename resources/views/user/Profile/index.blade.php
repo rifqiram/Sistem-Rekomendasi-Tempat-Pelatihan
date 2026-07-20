@@ -238,14 +238,14 @@
                     btn.disabled = false;
                 },
                 (error) => {
-                    window.showAlert('error', 'Akses Ditolak', 'Gagal mendapatkan lokasi. Pastikan izin lokasi (GPS) di browser diaktifkan.');
+                    window.showError('Akses Ditolak', 'Gagal mendapatkan lokasi. Pastikan izin lokasi (GPS) di browser diaktifkan.');
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
         } else {
-            window.showAlert('error', 'Tidak Didukung', 'Browser Anda tidak mendukung fitur Geolocation.');
+            window.showError('Tidak Didukung', 'Browser Anda tidak mendukung fitur Geolocation.');
         }
     });
 
@@ -333,26 +333,18 @@
             btnSave.disabled = false;
 
             // Success with redirect option
-            Swal.fire({
-                icon: 'success',
-                title: 'Profil Tersimpan',
-                text: 'Data profil dan lokasi Anda berhasil diperbarui.',
-                showCancelButton: true,
-                confirmButtonText: 'Lanjut ke Kuesioner',
-                cancelButtonText: 'Tutup',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: 'swal2-confirm border-0 text-white me-2',
-                    cancelButton: 'swal2-cancel border-0 text-white'
-                }
-            }).then((result) => {
+            window.showConfirm(
+                'Profil Tersimpan',
+                'Data profil dan lokasi Anda berhasil diperbarui. Apakah Anda ingin melanjutkan ke Kuesioner?',
+                'Lanjut ke Kuesioner'
+            ).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = '/user/questionnaire';
                 }
             });
 
         } catch (error) {
-            window.showAlert('error', 'Gagal Disimpan', error.message);
+            window.showError('Gagal Disimpan', error.message);
             btnSave.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Profil';
             btnSave.disabled = false;
         }
